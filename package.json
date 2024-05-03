@@ -1,0 +1,13 @@
+{
+	"dependencies": {
+		"mime": "3",
+		"node-fetch": "2",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.4.5"
+	},
+	"devDependencies": {
+		"@types/mime": "^3.0.4",
+		"@types/node-fetch": "^2.6.11",
+		"prettier": "^3.2.5"
+	}
+}
