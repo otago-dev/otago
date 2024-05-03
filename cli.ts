@@ -139,7 +139,7 @@ const get_manifest = ({
 }) => {
   return {
     id,
-    createdAt: Date.now().toString(),
+    createdAt: new Date().toISOString(),
     runtimeVersion,
     launchAsset: asset_uploaded.bundle,
     assets: asset_uploaded.assets,
