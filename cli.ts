@@ -1,7 +1,8 @@
 // npx otago deploy msjs-test --key otago-11341fb2a6932464fac4939662912f532ef4 [--eas-profile production]
 
-import path from "path";
 import { expo_asset_upload_all, expo_config_generate } from "./sdk.expo";
+import execa from "execa";
+import path from "path";
 
 const api_key = "otago-11341fb2a6932464fac4939662912f532ef4";
 const ROOT_DIR = ".";
@@ -123,6 +124,15 @@ const config_extract = () => {
   throw new Error("not implemented");
 };
 
+const git_current_version = async () => {
+  try {
+    const { stdout } = await execa("git", ["log", "--pretty=tformat:%h", "-n1", path.resolve(ROOT_DIR)]);
+    return stdout;
+  } catch (e) {
+    return "no_git_info";
+  }
+};
+
 const expo_main = async () => {
   // calcul de la expo_config
   const config = config_extract();
@@ -136,7 +146,7 @@ const expo_main = async () => {
     },
     body: JSON.stringify({
       runtime_version: config.runtime_version,
-      commit_version: "gitv42", // git log --pretty=tformat:"%h" -n1 DIR
+      commit_version: await git_current_version(),
       config,
     }),
   });
