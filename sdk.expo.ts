@@ -1,6 +1,6 @@
 import { asset_upload } from "./asset";
 import path from "path";
-import ExpoConfig from "@expo/config";
+import { getConfig } from "@expo/config";
 
 type EXPO_METADATA_JSON_PLATFORM = {
   bundle: string;
@@ -84,7 +84,7 @@ export const expo_asset_upload_all = async ({
 
 export const expo_config_generate = (root_dir: string) => {
   const expo_root_dir = path.resolve(root_dir);
-  const config = ExpoConfig.getConfig(expo_root_dir, {
+  const config = getConfig(expo_root_dir, {
     skipSDKVersionRequirement: true,
     isPublicConfig: true,
   });
