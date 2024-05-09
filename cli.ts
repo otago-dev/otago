@@ -1,35 +1,18 @@
 // npx otago deploy msjs-test --key otago-11341fb2a6932464fac4939662912f532ef4 [--eas-profile production]
 
-import { expo_asset_upload_all, expo_config_generate } from "./sdk.expo";
 import execa from "execa";
 import path from "path";
+import type { Manifest } from "./misc";
+import { expo_asset_upload_all, expo_config_generate } from "./sdk.expo";
+import { sign_manifest } from "./signing";
 
 const api_key = "otago-11341fb2a6932464fac4939662912f532ef4";
 const ROOT_DIR = ".";
-
-type ManifestAsset = {
-  url: string;
-  hash: string;
-  key: string;
-  fileExtension: string;
-  contentType: string;
-};
-type Manifest = {
-  id: string;
-  createdAt: string;
-  runtimeVersion: string;
-  launchAsset: ManifestAsset;
-  assets: ManifestAsset[];
-  metadata: {};
-  extra: Record<string, any>;
-};
+const SIGN_KEY_PATH = "/home/jnoleau/repo/devanco/otago/certs/code-signing-certificates/keys/rn50-private-key.pem";
+// const SIGN_KEY_PATH = undefined;
 
 const asset_upload_all = async (otago_api_key: string) => {
   return expo_asset_upload_all({ otago_api_key, root_dir: ROOT_DIR });
-};
-
-const manifest_signature = ({ manifest }: { manifest: Manifest }) => {
-  return null;
 };
 
 const send_manifest = async ({
@@ -80,14 +63,14 @@ const send_manifest = async ({
         ? {
             launchable_url: manifest_android.launchAsset.url,
             manifest: manifest_android_final!,
-            signature: manifest_signature({ manifest: manifest_android_final! }),
+            signature: SIGN_KEY_PATH ? await sign_manifest(manifest_android_final!, SIGN_KEY_PATH) : null,
           }
         : undefined,
       ios: manifest_ios
         ? {
             launchable_url: manifest_ios.launchAsset.url,
             manifest: manifest_ios_final!,
-            signature: manifest_signature({ manifest: manifest_ios_final! }),
+            signature: SIGN_KEY_PATH ? await sign_manifest(manifest_ios_final!, SIGN_KEY_PATH) : null,
           }
         : undefined,
     }),
@@ -194,4 +177,136 @@ const expo_main = async () => {
   console.log("youpi !!");
 };
 
-expo_main();
+const xxx = {
+  id: "ae22c8bd-8044-4a65-9000-e4350d61553f",
+  extra: {
+    expoConfig: {
+      ios: { icon: "./assets/images/ico_ios.png", supportsTablet: false },
+      icon: "./assets/images/ico_android.png",
+      name: "MardiSoirJeSors",
+      slug: "msjs",
+      extra: { eas: { projectId: "a692d586-fd06-40be-81c2-5a53390936f4" }, router: { origin: false } },
+      owner: "devanco",
+      scheme: "msjs",
+      splash: { image: "./assets/images/splash.png", resizeMode: "cover", backgroundColor: "#ffffff" },
+      android: {
+        icon: "./assets/images/ico_android.png",
+        package: "com.devanco.msjs",
+        adaptiveIcon: { backgroundColor: "#380066", foregroundImage: "./assets/images/ico_android_foreground.png" },
+        playStoreUrl: "https://play.google.com/store/apps/details?id=com.devanco.msjs",
+      },
+      plugins: ["expo-router"],
+      updates: {},
+      version: "4.0.0",
+      platforms: ["ios", "android"],
+      sdkVersion: "50.0.0",
+      experiments: { typedRoutes: true },
+      orientation: "portrait",
+      primaryColor: "#380066",
+      runtimeVersion: "sdk-50.v-3",
+      androidStatusBar: { barStyle: "light-content" },
+      userInterfaceStyle: "automatic",
+      assetBundlePatterns: ["**/*"],
+    },
+  },
+  assets: [
+    {
+      key: "b06871f281fee6b241d60582ae9369b9",
+      url: "https://pub-23962046f76042c5b619ac24f84ed16d.r2.dev/12b16755-3c44-418c-a6af-373ed18301ae/b06871f281fee6b241d60582ae9369b9",
+      hash: "qljzPyOaD7AvXHpsRcBD16msmgkzNYBmlOzW1O3A1qg",
+      contentType: "font/ttf",
+      fileExtension: ".ttf",
+    },
+    {
+      key: "778ffc9fe8773a878e9c30a6304784de",
+      url: "https://pub-23962046f76042c5b619ac24f84ed16d.r2.dev/12b16755-3c44-418c-a6af-373ed18301ae/778ffc9fe8773a878e9c30a6304784de",
+      hash: "i2Gkx-9w3JJ1PwSUl2SC9m_UFQ7CPfx3KrZeEDc6-lU",
+      contentType: "image/png",
+      fileExtension: ".png",
+    },
+    {
+      key: "376d6a4c7f622917c39feb23671ef71d",
+      url: "https://pub-23962046f76042c5b619ac24f84ed16d.r2.dev/12b16755-3c44-418c-a6af-373ed18301ae/376d6a4c7f622917c39feb23671ef71d",
+      hash: "QJsG0VpGM-5viirUgoKq0M4zQ_TYyPfLhAhN5mrM54I",
+      contentType: "image/png",
+      fileExtension: ".png",
+    },
+    {
+      key: "c79c3606a1cf168006ad3979763c7e0c",
+      url: "https://pub-23962046f76042c5b619ac24f84ed16d.r2.dev/12b16755-3c44-418c-a6af-373ed18301ae/c79c3606a1cf168006ad3979763c7e0c",
+      hash: "kGZm3WiTRq2iMs42ia3vkHtCV_obWT8DY40rlJf2SIQ",
+      contentType: "image/png",
+      fileExtension: ".png",
+    },
+    {
+      key: "02bc1fa7c0313217bde2d65ccbff40c9",
+      url: "https://pub-23962046f76042c5b619ac24f84ed16d.r2.dev/12b16755-3c44-418c-a6af-373ed18301ae/02bc1fa7c0313217bde2d65ccbff40c9",
+      hash: "_6fuRbdkBbpzkhSVAI99aMneY5X0tpQdsGNGX244IyA",
+      contentType: "image/png",
+      fileExtension: ".png",
+    },
+    {
+      key: "35ba0eaec5a4f5ed12ca16fabeae451d",
+      url: "https://pub-23962046f76042c5b619ac24f84ed16d.r2.dev/12b16755-3c44-418c-a6af-373ed18301ae/35ba0eaec5a4f5ed12ca16fabeae451d",
+      hash: "hM9es7ICUPaeDkczvrTaX0F_BoKJKlrRteYlcHU8IbE",
+      contentType: "image/png",
+      fileExtension: ".png",
+    },
+    {
+      key: "5223c8d9b0d08b82a5670fb5f71faf78",
+      url: "https://pub-23962046f76042c5b619ac24f84ed16d.r2.dev/12b16755-3c44-418c-a6af-373ed18301ae/5223c8d9b0d08b82a5670fb5f71faf78",
+      hash: "LJXowmdeeZM1_QBGuwfb2gbLfs_1HtN5IsYwnWGcxNM",
+      contentType: "image/png",
+      fileExtension: ".png",
+    },
+    {
+      key: "563d5e3294b67811d0a1aede6f601e30",
+      url: "https://pub-23962046f76042c5b619ac24f84ed16d.r2.dev/12b16755-3c44-418c-a6af-373ed18301ae/563d5e3294b67811d0a1aede6f601e30",
+      hash: "M3Rw55duRh-sGFMCjFkHlEfvd8GivSJoVoQJXvBNFBQ",
+      contentType: "image/png",
+      fileExtension: ".png",
+    },
+    {
+      key: "b6c297a501e289394b0bc5dc69c265e6",
+      url: "https://pub-23962046f76042c5b619ac24f84ed16d.r2.dev/12b16755-3c44-418c-a6af-373ed18301ae/b6c297a501e289394b0bc5dc69c265e6",
+      hash: "nUUUlHIjdOeMNjvKmhYS7NKv-SWftJkSFV5rriaFsqU",
+      contentType: "image/png",
+      fileExtension: ".png",
+    },
+    {
+      key: "5974eb3e1c5314e8d5a822702d7d0740",
+      url: "https://pub-23962046f76042c5b619ac24f84ed16d.r2.dev/12b16755-3c44-418c-a6af-373ed18301ae/5974eb3e1c5314e8d5a822702d7d0740",
+      hash: "rCcPeBVDZeEAZAH3Fdb9k8RII3FIu_PvDqfrDAsjUUQ",
+      contentType: "image/png",
+      fileExtension: ".png",
+    },
+    {
+      key: "9d9c5644f55c2f6e4b7f247c378b2fe9",
+      url: "https://pub-23962046f76042c5b619ac24f84ed16d.r2.dev/12b16755-3c44-418c-a6af-373ed18301ae/9d9c5644f55c2f6e4b7f247c378b2fe9",
+      hash: "vahwd_zNPKVOz_ZK9r9JovUCDO-kqrkSHLpNktCjAEs",
+      contentType: "image/png",
+      fileExtension: ".png",
+    },
+    {
+      key: "49a79d66bdea2debf1832bf4d7aca127",
+      url: "https://pub-23962046f76042c5b619ac24f84ed16d.r2.dev/12b16755-3c44-418c-a6af-373ed18301ae/49a79d66bdea2debf1832bf4d7aca127",
+      hash: "TDIlFNJlBiqj9_vYH1t5ORzLdCaOaiBgAGHgzjMjT0E",
+      contentType: "font/ttf",
+      fileExtension: ".ttf",
+    },
+  ],
+  metadata: {},
+  createdAt: "2024-05-09T16:01:00.389Z",
+  launchAsset: {
+    key: "e5f392992ae6c6f8a7d6f0dfa7b9052a",
+    url: "https://lemur-stirred-amazingly.ngrok-free.app/projects/0ffc554b/manifest/launchable?manifest_id=ae22c8bd-8044-4a65-9000-e4350d61553f&platform=android",
+    hash: "9lwwx8JySOdX5iPTiE0C43eO6a0JUnMFnne9BO4cQN8",
+    contentType: "application/javascript",
+    fileExtension: ".bundle",
+  },
+  runtimeVersion: "sdk-50.v-3",
+};
+
+// expo_main();
+
+sign_manifest(xxx, SIGN_KEY_PATH).then(console.log);
