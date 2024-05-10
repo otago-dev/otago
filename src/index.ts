@@ -1,10 +1,11 @@
 import { program } from "commander";
+import { version } from "../package.json";
 import deploy from "./deploy";
 
 program
   .name("otago-cli")
   .description("CLI to deploy your code pushes with Otago services.")
-  .version(require("../package.json").version, "-v, --version");
+  .version(version, "-v, --version");
 
 program
   .command("deploy")
