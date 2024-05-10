@@ -1,11 +1,9 @@
-import execa from "execa";
-import path from "path";
+import { exec } from "child_process";
 
 export const get_current_git_version = async (root_dir: string) => {
-  try {
-    const { stdout } = await execa("git", ["log", "--pretty=tformat:%h", "-n1", path.resolve(root_dir)]);
-    return stdout;
-  } catch (error) {
-    return "";
-  }
+  return new Promise<string>((resolve) => {
+    exec("git log --pretty=tformat:%h -n1", { cwd: root_dir }, (error, stdout) => {
+      resolve(error ? "" : stdout.trim());
+    });
+  });
 };
