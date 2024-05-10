@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { program } from "commander";
 import { version } from "../package.json";
 import deploy from "./deploy";
