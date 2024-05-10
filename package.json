@@ -1,12 +1,12 @@
 {
   "name": "otago",
   "version": "1.0.0",
-  "main": "./dist/src/",
+  "main": "dist/index.js",
   "bin": {
-    "otago": "./dist/src/"
+    "otago": "dist/index.js"
   },
   "scripts": {
-    "build": "npx tsc",
+    "build": "tsup src/index.ts",
     "clean": "rm -rf dist/",
     "lint": "eslint src",
     "prepublish": "pnpm run build",
@@ -26,6 +26,7 @@
     "eslint": "^9.2.0",
     "prettier": "^3.2.5",
     "semantic-release": "^23.1.1",
+    "tsup": "^8.0.2",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.8.0"
   },
