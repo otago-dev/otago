@@ -37,4 +37,4 @@ jobs:
       - name: Run type checker
         run: pnpm run typecheck
       - name: Check that the build works
-        run: pnpm run build
+        run: pnpm run build && node . --version
