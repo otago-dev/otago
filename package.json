@@ -14,12 +14,12 @@
   "dependencies": {
     "@expo/config": "^9.0.1",
     "commander": "^12.0.0",
-    "mime": "3",
+    "mime": "4",
     "node-fetch": "2"
   },
   "devDependencies": {
     "@eslint/js": "^8.57.0",
-    "@types/mime": "^3.0.4",
+    "@types/mime": "^4.0.0",
     "@types/node-fetch": "^2.6.11",
     "eslint": "^8.57.0",
     "prettier": "^3.2.5",
