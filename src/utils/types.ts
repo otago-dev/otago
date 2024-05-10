@@ -12,6 +12,6 @@ export type Manifest = {
   runtimeVersion: string;
   launchAsset: ManifestAsset;
   assets: ManifestAsset[];
-  metadata: {};
-  extra: Record<string, any>;
+  metadata: Record<string, unknown>;
+  extra: Record<string, unknown>;
 };

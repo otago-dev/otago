@@ -85,7 +85,7 @@ export const upload_all_expo_assets = async ({
   project_ref: string;
   root_dir: string;
 }) => {
-  const { fileMetadata }: EXPO_METADATA_JSON = require(path.resolve(root_dir, `./dist/metadata.json`));
+  const { fileMetadata }: EXPO_METADATA_JSON = await import(path.resolve(root_dir, `./dist/metadata.json`));
 
   const files_ios_uploading = fileMetadata.ios
     ? expo_asset_upload_plaform({ otago_api_key, project_ref, platform_files: fileMetadata.ios, root_dir })

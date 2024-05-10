@@ -39,7 +39,7 @@ export const get_app_manifest = ({
   id: string;
   asset_uploaded: NonNullable<Awaited<ReturnType<typeof upload_all_assets>>["android"]>;
   runtimeVersion: string;
-  extra: Record<string, any>;
+  extra: Record<string, unknown>;
 }) => {
   return {
     id,
