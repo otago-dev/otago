@@ -6,8 +6,10 @@
     "otago": "./dist/src/"
   },
   "scripts": {
-    "bundle": "npx tsc",
-    "lint": "eslint src"
+    "build": "npx tsc",
+    "clean": "rm -rf dist/",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@expo/config": "^9.0.1",
