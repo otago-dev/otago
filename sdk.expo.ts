@@ -59,7 +59,10 @@ export const expo_asset_upload_all = async ({
     ? expo_asset_upload_plaform({ otago_api_key, platform_files: fileMetadata.android, root_dir })
     : Promise.resolve([]);
 
-  const [files_ios, files_android] = await Promise.all([files_ios_uploading, files_android_uploading]);
+  // FIXME: currency error between ios and android assets
+  // const [files_ios, files_android] = await Promise.all([files_ios_uploading, files_android_uploading]);
+  const files_ios = await files_ios_uploading;
+  const files_android = await files_android_uploading;
 
   return {
     ios: fileMetadata.ios
