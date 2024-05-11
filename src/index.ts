@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
 import { program } from "commander";
-import { version } from "../package.json";
+import path from "path";
+import fs from "fs";
 import deploy from "./deploy";
+
+const { version } = JSON.parse(fs.readFileSync(path.resolve(__dirname, `../package.json`)).toString());
 
 program
   .name("otago-cli")
