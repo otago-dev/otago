@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
 import { program } from "commander";
-import path from "path";
 import fs from "fs";
+import path from "path";
 import deploy from "./deploy";
 
 const { version } = JSON.parse(fs.readFileSync(path.resolve(__dirname, `../package.json`)).toString());
 
 program
-  .name("otago-cli")
+  .name("otago")
   .description("CLI to deploy your code pushes with Otago services.")
   .version(version, "-v, --version");
 
