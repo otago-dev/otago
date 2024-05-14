@@ -8,6 +8,11 @@
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/otago-dev/otago.git"
+  },
+  "homepage": "https://otago.dev",
   "scripts": {
     "build": "tsup src/index.ts",
     "clean": "rm -rf dist/",
