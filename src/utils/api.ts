@@ -9,6 +9,29 @@ import type { Manifest } from "./types";
 const OTAGO_BASE_URL = process.env.OTAGO_BASE_URL || "https://otago.dev";
 const SIGN_KEY_PATH = process.env.SIGN_KEY_PATH; // TODO: handle sign key path
 
+type CompanyProjectDto = {
+  id: string;
+  company_id: string;
+  ref: string;
+  name: string;
+  env: string;
+  slug: string;
+  metadata: object;
+  display_name: string;
+  manifest_url: string;
+  created_at: string;
+};
+
+export const get_project = async (project_ref: string, otago_api_key: string) => {
+  const response = await fetch(`${OTAGO_BASE_URL}/api/projects/${project_ref}`, {
+    headers: {
+      "Content-Type": "application/json",
+      "Api-Key": otago_api_key,
+    },
+  });
+  return (await response.json()) as CompanyProjectDto;
+};
+
 export const create_project_deployment = async (project_ref: string, otago_api_key: string, params: object) => {
   const response = await fetch(`${OTAGO_BASE_URL}/api/projects/${project_ref}/deployments`, {
     method: "POST",
@@ -18,7 +41,7 @@ export const create_project_deployment = async (project_ref: string, otago_api_k
     },
     body: JSON.stringify(params),
   });
-  return (await response.json()) as { deployment_id: string; deploy_base_url: string };
+  return (await response.json()) as { id: string };
 };
 
 export const upload_deployment_asset = async ({
@@ -101,21 +124,21 @@ export const send_deployment_manifest = async ({
   otago_deployment_id,
   otago_project_id,
   otago_api_key,
-  otago_deploy_base_url,
+  otago_project_manifest_url,
 }: {
   manifest_android: Manifest | undefined; // used for TS checking
   manifest_ios: Manifest | undefined;
   otago_deployment_id: string;
   otago_project_id: string;
   otago_api_key: string;
-  otago_deploy_base_url: string;
+  otago_project_manifest_url: string;
 }) => {
   const manifest_android_final = manifest_android
     ? {
         ...manifest_android,
         launchAsset: {
           ...manifest_android.launchAsset,
-          url: `${otago_deploy_base_url}/manifest/launchable?manifest_id=${manifest_android.id}&platform=android`,
+          url: `${otago_project_manifest_url}/launchable?manifest_id=${manifest_android.id}&platform=android`,
         },
       }
     : undefined;
@@ -125,7 +148,7 @@ export const send_deployment_manifest = async ({
         ...manifest_ios,
         launchAsset: {
           ...manifest_ios.launchAsset,
-          url: `${otago_deploy_base_url}/manifest/launchable?manifest_id=${manifest_ios.id}&platform=ios`,
+          url: `${otago_project_manifest_url}/launchable?manifest_id=${manifest_ios.id}&platform=ios`,
         },
       }
     : undefined;

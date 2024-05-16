@@ -1,31 +1,38 @@
-import { create_project_deployment, send_deployment_manifest } from "./utils/api";
+import { create_project_deployment, get_project, send_deployment_manifest } from "./utils/api";
 import { extract_app_config, get_app_manifest, get_app_type, upload_all_assets } from "./utils/app";
 import { step_spinner } from "./utils/cli";
 import { get_current_git_version } from "./utils/git";
 
 const ROOT_DIR = ".";
 
-export default async ({ project: otago_project_ref, key: otago_api_key }: { project: string; key: string }) => {
+export default async ({ project: otago_project_slug, key: otago_api_key }: { project: string; key: string }) => {
   let step;
+
+  // Get project
+  const project = await get_project(otago_project_slug, otago_api_key);
+
+  // Set environment variables
+  process.env.OTAGO_PROJECT = otago_project_slug;
+  process.env.EXPO_UPDATE_URL = project.manifest_url;
 
   const app_type = await get_app_type();
   const config = extract_app_config(app_type, ROOT_DIR);
 
-  // TODO: Bundle assets
-  // TODO: inline env vars from --eas-profile
-  // step = step_spinner("Bundle assets");
-  // step.succeed();
-
   // Create project deployment
-  const { deployment_id, deploy_base_url } = await create_project_deployment(otago_project_ref, otago_api_key, {
+  const { id: deployment_id } = await create_project_deployment(otago_project_slug, otago_api_key, {
     runtime_version: config.runtime_version,
     commit_version: await get_current_git_version(ROOT_DIR),
     config,
   });
 
+  // TODO: Bundle assets
+  // TODO: inline env vars from --eas-profile?
+  // step = step_spinner("Bundle assets");
+  // step.succeed();
+
   // Upload assets
   step = step_spinner("Upload assets");
-  const asset_manifest = await upload_all_assets(app_type, otago_api_key, otago_project_ref, ROOT_DIR);
+  const asset_manifest = await upload_all_assets(app_type, otago_api_key, otago_project_slug, ROOT_DIR);
   step.succeed();
 
   // Generate manifest
@@ -54,9 +61,9 @@ export default async ({ project: otago_project_ref, key: otago_api_key }: { proj
     manifest_android,
     manifest_ios,
     otago_deployment_id: deployment_id,
-    otago_project_id: otago_project_ref,
+    otago_project_id: otago_project_slug,
     otago_api_key,
-    otago_deploy_base_url: deploy_base_url,
+    otago_project_manifest_url: project.manifest_url,
   });
 
   if (ok) {
