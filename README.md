@@ -3,7 +3,7 @@
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://cdn.otago.dev/logo/otago-text-darkmode.png" />
       <source media="(prefers-color-scheme: light)" srcset="https://cdn.otago.dev/logo/otago-text.png" />
-      <img alt="Otago" src="https://cdn.otago.dev/logo/otago-text.png" />
+      <img alt="Otago" src="https://cdn.otago.dev/logo/otago-text.png" width="300" />
     </picture>
   </a>
 </p>

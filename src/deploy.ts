@@ -5,8 +5,7 @@ import { get_current_git_version } from "./utils/git";
 
 const ROOT_DIR = ".";
 
-export default async (project_ref: string, options: { key: string }) => {
-  const otago_api_key = options.key;
+export default async ({ project: otago_project_ref, key: otago_api_key }: { project: string; key: string }) => {
   let step;
 
   const app_type = await get_app_type();
@@ -18,7 +17,7 @@ export default async (project_ref: string, options: { key: string }) => {
   // step.succeed();
 
   // Create project deployment
-  const { deployment_id, deploy_base_url } = await create_project_deployment(project_ref, otago_api_key, {
+  const { deployment_id, deploy_base_url } = await create_project_deployment(otago_project_ref, otago_api_key, {
     runtime_version: config.runtime_version,
     commit_version: await get_current_git_version(ROOT_DIR),
     config,
@@ -26,7 +25,7 @@ export default async (project_ref: string, options: { key: string }) => {
 
   // Upload assets
   step = step_spinner("Upload assets");
-  const asset_manifest = await upload_all_assets(app_type, otago_api_key, project_ref, ROOT_DIR);
+  const asset_manifest = await upload_all_assets(app_type, otago_api_key, otago_project_ref, ROOT_DIR);
   step.succeed();
 
   // Generate manifest
@@ -55,7 +54,7 @@ export default async (project_ref: string, options: { key: string }) => {
     manifest_android,
     manifest_ios,
     otago_deployment_id: deployment_id,
-    otago_project_id: project_ref,
+    otago_project_id: otago_project_ref,
     otago_api_key,
     otago_deploy_base_url: deploy_base_url,
   });
