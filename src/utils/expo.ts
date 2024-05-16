@@ -1,4 +1,4 @@
-import { getConfig } from "@expo/config";
+import { getConfig, GetConfigOptions } from "@expo/config";
 import fs from "fs";
 import path from "path";
 import { upload_deployment_asset } from "./api";
@@ -17,11 +17,12 @@ type EXPO_METADATA_JSON = {
   };
 };
 
-export const expo_config_generate = (root_dir: string) => {
+export const expo_config_generate = (root_dir: string, options: GetConfigOptions = {}) => {
   const expo_root_dir = path.resolve(root_dir);
   const config = getConfig(expo_root_dir, {
     skipSDKVersionRequirement: true,
-    isPublicConfig: true,
+    isPublicConfig: false,
+    ...options,
   });
 
   let runtime_version = config.exp.runtimeVersion;
