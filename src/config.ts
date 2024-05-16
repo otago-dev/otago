@@ -1,6 +1,7 @@
 import { get_project } from "./utils/api";
-import { extract_app_config, get_app_type } from "./utils/app";
+import { detect_package_manager, get_app_type } from "./utils/app";
 import { colored_log, step_spinner } from "./utils/cli";
+import { expo_config_get } from "./utils/expo";
 
 const ROOT_DIR = ".";
 
@@ -15,14 +16,37 @@ export default async ({ project: otago_project_slug, key: otago_api_key }: { pro
   process.env.EXPO_UPDATE_URL = project.manifest_url;
 
   // Get expo-updates config
-  const app_type = await get_app_type();
-  const config = extract_app_config(app_type, ROOT_DIR);
-  // TODO: handle if config doesn't exist
-  const expoConfig = config.extra.expoConfig;
+  const app_type = await get_app_type(ROOT_DIR);
+  const config = expo_config_get(ROOT_DIR);
+  const expoConfig = config.exp;
 
   // Display if config is valid or tips to fix it
 
-  // TODO: check expo-updates dependency
+  step = step_spinner("Check expo-updates dependency");
+  const has_expo_updates = Boolean(
+    config.pkg.dependencies?.["expo-updates"] || config.pkg.devDependencies?.["expo-updates"],
+  );
+  if (has_expo_updates) {
+    step.succeed();
+  } else {
+    step.fail();
+    const { add_command } = await detect_package_manager(ROOT_DIR);
+    colored_log(
+      "yellow",
+      `Dependency "expo-updates" is missing. Please add it to your package.json:
+
+${add_command} expo-updates
+`,
+    );
+  }
+
+  step = step_spinner(`Check native config`);
+  if (app_type === "expo") {
+    step.succeed();
+  } else {
+    // TODO: if react-native, check https://docs.expo.dev/bare/installing-updates/
+    step.succeed();
+  }
 
   step = step_spinner("Check runtime version");
   const has_runtime_version = Boolean(expoConfig.runtimeVersion);
@@ -37,7 +61,7 @@ export default async ({ project: otago_project_slug, key: otago_api_key }: { pro
 # app.json or app.config.js
 {
   "expo": {
-    "runtimeVersion": { policy: "sdkVersion" },
+    "runtimeVersion": ${app_type === "expo" ? `{ policy: "sdkVersion" }` : `"1.0.0"`},
     ...
   }
 }

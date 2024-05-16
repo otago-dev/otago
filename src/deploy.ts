@@ -15,7 +15,7 @@ export default async ({ project: otago_project_slug, key: otago_api_key }: { pro
   process.env.OTAGO_PROJECT = otago_project_slug;
   process.env.EXPO_UPDATE_URL = project.manifest_url;
 
-  const app_type = await get_app_type();
+  const app_type = await get_app_type(ROOT_DIR);
   const config = extract_app_config(app_type, ROOT_DIR);
 
   // Create project deployment

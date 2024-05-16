@@ -17,34 +17,13 @@ type EXPO_METADATA_JSON = {
   };
 };
 
-export const expo_config_generate = (root_dir: string, options: GetConfigOptions = {}) => {
+export const expo_config_get = (root_dir: string, options: GetConfigOptions = {}) => {
   const expo_root_dir = path.resolve(root_dir);
-  const config = getConfig(expo_root_dir, {
+  return getConfig(expo_root_dir, {
     skipSDKVersionRequirement: true,
     isPublicConfig: false,
     ...options,
   });
-
-  let runtime_version = config.exp.runtimeVersion;
-  if (typeof runtime_version === "object" && "policy" in runtime_version) {
-    // TODO: "nativeVersion" | "appVersion" | "fingerprint";
-    if (runtime_version.policy === "sdkVersion") runtime_version = config.exp.sdkVersion;
-  }
-  if (!runtime_version || typeof runtime_version !== "string") {
-    throw new Error("runtimeVersion is not a string");
-  }
-
-  return {
-    type: "expo" as const,
-    name: config.exp.name,
-    icon: config.exp.android?.icon || config.exp.ios?.icon || config.exp.icon || null,
-    android_package: config.exp.android?.package,
-    ios_package: config.exp.ios?.bundleIdentifier,
-    runtime_version,
-    version: config.exp.version,
-    scheme: Array.isArray(config.exp.scheme) ? config.exp.scheme[0] : config.exp.scheme,
-    extra: { expoConfig: config.exp },
-  };
 };
 
 const expo_asset_upload_plaform = async ({
