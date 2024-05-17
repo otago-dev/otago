@@ -1,7 +1,7 @@
 import { get_project } from "./utils/api";
 import { detect_package_manager } from "./utils/app";
 import { colored_log, step_spinner } from "./utils/cli";
-import { expo_config_get } from "./utils/expo";
+import { expo_config_get, supported_platforms } from "./utils/expo";
 
 const ROOT_DIR = ".";
 
@@ -17,12 +17,13 @@ export default async ({ project: otago_project_slug, key: otago_api_key }: { pro
 
   // Get expo-updates config
   const config = expo_config_get(ROOT_DIR);
-  const expoConfig = config.exp;
+  const expo_config = config.exp;
+  const platforms = expo_config.platforms?.filter((platform) => supported_platforms.some((p) => p === platform)) || [];
 
   // Display if config is valid or tips to fix it
 
-  step = step_spinner(`Detected platforms: ${expoConfig.platforms?.filter((p) => p !== "web").join(", ")}`);
-  if (expoConfig.platforms && expoConfig.platforms?.length > 0) {
+  step = step_spinner(`Detected platforms: ${platforms.join(", ")}`);
+  if (platforms.length > 0) {
     step.succeed();
   } else {
     step.fail();
@@ -51,15 +52,8 @@ ${add_command} expo-updates
     );
   }
 
-  step = step_spinner(`Check native config`);
-  // https://docs.expo.dev/bare/installing-updates/
-  // TODO: if android, check manifest
-  // TODO: if ios, check Info.plist
-  // TODO: if !android && !ios, check config.exp.(runtimeVersion & updates)...
-  step.succeed();
-
   step = step_spinner("Check runtime version");
-  const has_runtime_version = Boolean(expoConfig.runtimeVersion);
+  const has_runtime_version = Boolean(expo_config.runtimeVersion);
   if (has_runtime_version) {
     step.succeed();
   } else {
@@ -80,17 +74,17 @@ ${add_command} expo-updates
   }
 
   step = step_spinner("Check update URL");
-  const has_update_url = expoConfig.updates?.url === project.manifest_url;
+  const has_update_url = expo_config.updates?.url === project.manifest_url;
   if (has_update_url) {
     step.succeed();
   } else {
     step.fail();
     colored_log(
       "yellow",
-      expoConfig.updates?.url
+      expo_config.updates?.url
         ? `Update URL mismatch:
   - Expected: ${project.manifest_url}
-  - Got:      ${expoConfig.updates.url}
+  - Got:      ${expo_config.updates.url}
 
 Note: if you use multiple environments, you need a dynamic config file:
 
@@ -117,6 +111,16 @@ Note: if you use multiple environments, you need a dynamic config file:
 }
 `,
     );
+  }
+
+  for (const platform of platforms) {
+    step = step_spinner(`Check native config for ${platform}`);
+    // https://docs.expo.dev/bare/installing-updates/
+    // TODO: check config.exp.(runtimeVersion & updates)... (always needed to resolve runtime version)
+    // TODO: if android, check manifest
+    // TODO: if ios, check Info.plist
+    // const has_runtime_version
+    step.succeed();
   }
 
   // TODO: check updates.codeSigningCertificate

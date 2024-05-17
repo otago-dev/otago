@@ -42,7 +42,7 @@ export default async ({ project: otago_project_slug, key: otago_api_key }: { pro
       ? get_app_manifest({
           id: deployment_id,
           asset_uploaded: asset_manifest.android,
-          runtimeVersion: config.runtime_versions.android,
+          runtime_version: config.runtime_versions.android,
           extra: config.extra,
         })
       : undefined;
@@ -51,7 +51,7 @@ export default async ({ project: otago_project_slug, key: otago_api_key }: { pro
       ? get_app_manifest({
           id: deployment_id,
           asset_uploaded: asset_manifest.ios,
-          runtimeVersion: config.runtime_versions.ios,
+          runtime_version: config.runtime_versions.ios,
           extra: config.extra,
         })
       : undefined;

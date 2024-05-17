@@ -5,6 +5,7 @@ import fs from "fs";
 import path from "path";
 import { upload_deployment_asset } from "./api";
 
+export type Platform = "android" | "ios";
 type EXPO_METADATA_JSON_PLATFORM = {
   bundle: string;
   assets: {
@@ -13,11 +14,10 @@ type EXPO_METADATA_JSON_PLATFORM = {
   }[];
 };
 type EXPO_METADATA_JSON = {
-  fileMetadata: {
-    ios?: EXPO_METADATA_JSON_PLATFORM;
-    android?: EXPO_METADATA_JSON_PLATFORM;
-  };
+  fileMetadata: Record<Platform, EXPO_METADATA_JSON_PLATFORM>;
 };
+
+export const supported_platforms: Platform[] = ["android", "ios"] as const;
 
 export const expo_config_get = (root_dir: string, options: GetConfigOptions = {}) => {
   const expo_root_dir = path.resolve(root_dir);
@@ -32,7 +32,7 @@ export const resolve_runtime_versions = async (
   root_dir: string,
   expo_config: ReturnType<typeof expo_config_get>["exp"],
 ) => {
-  const resolve_runtime_version = async (platform: "android" | "ios") => {
+  const resolve_runtime_version = async (platform: Platform) => {
     const runtime_version = await Updates.getRuntimeVersionAsync(
       root_dir,
       { ...expo_config, runtimeVersion: expo_config.runtimeVersion ?? { policy: "sdkVersion" } },

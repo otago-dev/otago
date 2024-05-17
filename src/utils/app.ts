@@ -28,18 +28,18 @@ export const upload_all_assets = async (otago_api_key: string, project_ref: stri
 export const get_app_manifest = ({
   id,
   asset_uploaded,
-  runtimeVersion,
+  runtime_version,
   extra,
 }: {
   id: string;
   asset_uploaded: NonNullable<Awaited<ReturnType<typeof upload_all_assets>>["android"]>;
-  runtimeVersion: string;
+  runtime_version: string;
   extra: Record<string, unknown>;
 }) => {
   return {
     id,
     createdAt: new Date().toISOString(),
-    runtimeVersion,
+    runtimeVersion: runtime_version,
     launchAsset: asset_uploaded.bundle,
     assets: asset_uploaded.assets,
     extra,
