@@ -21,6 +21,18 @@ export default async ({ project: otago_project_slug, key: otago_api_key }: { pro
 
   // Display if config is valid or tips to fix it
 
+  step = step_spinner(`Detected platforms: ${expoConfig.platforms?.filter((p) => p !== "web").join(", ")}`);
+  if (expoConfig.platforms && expoConfig.platforms?.length > 0) {
+    step.succeed();
+  } else {
+    step.fail();
+    colored_log(
+      "red",
+      `No platforms detected. There is something wrong with your expo config, have you installed expo modules? See https://docs.expo.dev/bare/installing-expo-modules/`,
+    );
+    return;
+  }
+
   step = step_spinner("Check expo-updates dependency");
   const has_expo_updates = Boolean(
     config.pkg.dependencies?.["expo-updates"] || config.pkg.devDependencies?.["expo-updates"],
@@ -40,7 +52,6 @@ ${add_command} expo-updates
   }
 
   step = step_spinner(`Check native config`);
-  // TODO: check exp.platforms
   // https://docs.expo.dev/bare/installing-updates/
   // TODO: if android, check manifest
   // TODO: if ios, check Info.plist
