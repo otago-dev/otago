@@ -74,18 +74,32 @@ ${add_command} expo-updates
     step.succeed();
   } else {
     step.fail();
-    // TODO: mismatch: display current and expected
     colored_log(
       "yellow",
-      `Update URL version ${expoConfig.updates?.url ? "mismatch" : "is missing"}. Add it to your app.json or app.config.js:
+      expoConfig.updates?.url
+        ? `Update URL mismatch:
+  - Expected: ${project.manifest_url}
+  - Got:      ${expoConfig.updates.url}
+
+Note: if you use multiple environments, you need a dynamic config file:
+
+# app.config.js
+{
+  "expo": {
+    "updates": {
+      "url": process.env.OTAGO_UPDATE_URL,
+      ...
+    }
+  }
+}
+`
+        : `Update URL is missing. Add it to your app.json or app.config.js:
 
 # app.json or app.config.js
 {
   "expo": {
     "updates": {
       "url": "${project.manifest_url}",
-      // Or if you use multiple environments:
-      // "url": process.env.OTAGO_PROJECT === "${otago_project_slug}" ? "${project.manifest_url}" : ...,
       ...
     }
   }
