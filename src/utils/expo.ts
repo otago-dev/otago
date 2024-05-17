@@ -1,4 +1,6 @@
 import { getConfig, GetConfigOptions } from "@expo/config";
+import { Updates } from "@expo/config-plugins";
+import * as Fingerprint from "@expo/fingerprint";
 import fs from "fs";
 import path from "path";
 import { upload_deployment_asset } from "./api";
@@ -24,6 +26,27 @@ export const expo_config_get = (root_dir: string, options: GetConfigOptions = {}
     isPublicConfig: false,
     ...options,
   });
+};
+
+export const resolve_runtime_versions = async (
+  root_dir: string,
+  expo_config: ReturnType<typeof expo_config_get>["exp"],
+) => {
+  const resolve_runtime_version = async (platform: "android" | "ios") => {
+    const runtime_version = await Updates.getRuntimeVersionAsync(
+      root_dir,
+      { ...expo_config, runtimeVersion: expo_config.runtimeVersion ?? { policy: "sdkVersion" } },
+      platform,
+    );
+    return runtime_version === Updates.FINGERPRINT_RUNTIME_VERSION_SENTINEL
+      ? (await Fingerprint.createFingerprintAsync(root_dir)).hash
+      : runtime_version;
+  };
+
+  return {
+    android: await resolve_runtime_version("android"),
+    ios: await resolve_runtime_version("ios"),
+  };
 };
 
 const expo_asset_upload_plaform = async ({
@@ -77,7 +100,7 @@ export const upload_all_expo_assets = async ({
     ? expo_asset_upload_plaform({ otago_api_key, project_ref, platform_files: fileMetadata.android, root_dir })
     : Promise.resolve([]);
 
-  // FIXME: currency error between ios and android assets
+  // FIXME: concurrency error between ios and android assets
   // const [files_ios, files_android] = await Promise.all([files_ios_uploading, files_android_uploading]);
   const files_ios = await files_ios_uploading;
   const files_android = await files_android_uploading;

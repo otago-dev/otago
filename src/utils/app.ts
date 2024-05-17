@@ -1,29 +1,23 @@
 import { existsSync } from "fs";
 import path from "path";
-import { expo_config_get, upload_all_expo_assets } from "./expo";
+import { expo_config_get, resolve_runtime_versions, upload_all_expo_assets } from "./expo";
 
-export const extract_app_config = (root_dir: string) => {
-  const config = expo_config_get(root_dir);
+export const extract_app_config = async (root_dir: string) => {
+  const { exp } = expo_config_get(root_dir);
 
-  let runtime_version = config.exp.runtimeVersion;
-  if (typeof runtime_version === "object" && "policy" in runtime_version) {
-    // TODO: "nativeVersion" | "appVersion" | "fingerprint";
-    // https://expo.dev/changelog/2024/01-18-sdk-50#introducing-expofingerprint
-    if (runtime_version.policy === "sdkVersion") runtime_version = config.exp.sdkVersion;
-  }
-  if (!runtime_version || typeof runtime_version !== "string") {
-    throw new Error("runtimeVersion is not a string");
-  }
+  if (!exp.platforms) throw new Error("No platform found");
+
+  const runtime_versions = await resolve_runtime_versions(root_dir, exp);
 
   return {
-    name: config.exp.name,
-    icon: config.exp.android?.icon || config.exp.ios?.icon || config.exp.icon || null,
-    android_package: config.exp.android?.package,
-    ios_package: config.exp.ios?.bundleIdentifier,
-    runtime_version,
-    version: config.exp.version,
-    scheme: Array.isArray(config.exp.scheme) ? config.exp.scheme[0] : config.exp.scheme,
-    extra: { expoConfig: config.exp },
+    name: exp.name,
+    icon: exp.android?.icon || exp.ios?.icon || exp.icon || null,
+    android_package: exp.android?.package,
+    ios_package: exp.ios?.bundleIdentifier,
+    runtime_versions,
+    version: exp.version,
+    scheme: Array.isArray(exp.scheme) ? exp.scheme[0] : exp.scheme,
+    extra: { expoConfig: exp },
   };
 };
 

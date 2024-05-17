@@ -11,6 +11,12 @@ importers:
       '@expo/config':
         specifier: ^9.0.1
         version: 9.0.1
+      '@expo/config-plugins':
+        specifier: ^8.0.4
+        version: 8.0.4
+      '@expo/fingerprint':
+        specifier: ^0.7.1
+        version: 0.7.1
       cli-cursor:
         specifier: ^3.1.0
         version: 3.1.0
@@ -241,6 +247,10 @@ packages:
   '@expo/config@9.0.1':
     resolution: {integrity: sha512-0tjaXBstTbXmD4z+UMFBkh2SZFwilizSQhW6DlaTMnPG5ezuw93zSFEWAuEC3YzkpVtNQTmYzxAYjxwh6seOGg==}
 
+  '@expo/fingerprint@0.7.1':
+    resolution: {integrity: sha512-lbTwFiIk0lOm9zzPRvnC45GfPqXqPB3w4hDDKVma+8FDAbPCWhNN42ltLhx/ekwcHFQxURmg0fHm59k0Vy+jtw==}
+    hasBin: true
+
   '@expo/json-file@8.3.3':
     resolution: {integrity: sha512-eZ5dld9AD0PrVRiIWpRkm5aIoWBw3kAyd8VkuWEy92sEthBKDDDHAnK2a0dw0Eil6j7rK7lS/Qaq/Zzngv2h5A==}
 
@@ -249,6 +259,10 @@ packages:
 
   '@expo/sdk-runtime-versions@1.0.0':
     resolution: {integrity: sha512-Doz2bfiPndXYFPMRwPyGa1k5QaKDVpY806UJj570epIiMzWaYyCtobasyfC++qfIXVb5Ocy7r3tP9d62hAQ7IQ==}
+
+  '@expo/spawn-async@1.7.2':
+    resolution: {integrity: sha512-QdWi16+CHB9JYP7gma19OVVg0BFkvU8zNj9GjWorYI8Iv8FUxjOCcYRuAmX4s/h91e4e7BPsskc8cSrZYho9Ew==}
+    engines: {node: '>=12'}
 
   '@humanwhocodes/config-array@0.13.0':
     resolution: {integrity: sha512-DZLEEqFWQFiyK6h5YIeynKx7JlvCYWL0cImfSRXZ9l4Sg2efkFGTuFf6vzXjK1cq6IYkU+Eg/JizXw+TD2vRNw==}
@@ -2563,6 +2577,19 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@expo/fingerprint@0.7.1':
+    dependencies:
+      '@expo/spawn-async': 1.7.2
+      chalk: 4.1.2
+      debug: 4.3.4
+      find-up: 5.0.0
+      minimatch: 3.1.2
+      p-limit: 3.1.0
+      resolve-from: 5.0.0
+      semver: 7.6.2
+    transitivePeerDependencies:
+      - supports-color
+
   '@expo/json-file@8.3.3':
     dependencies:
       '@babel/code-frame': 7.10.4
@@ -2576,6 +2603,10 @@ snapshots:
       xmlbuilder: 14.0.0
 
   '@expo/sdk-runtime-versions@1.0.0': {}
+
+  '@expo/spawn-async@1.7.2':
+    dependencies:
+      cross-spawn: 7.0.3
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:

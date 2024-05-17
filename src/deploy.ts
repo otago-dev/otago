@@ -16,11 +16,11 @@ export default async ({ project: otago_project_slug, key: otago_api_key }: { pro
   process.env.OTAGO_UPDATE_URL = project.manifest_url;
 
   // Get expo-updates config
-  const config = extract_app_config(ROOT_DIR);
+  const config = await extract_app_config(ROOT_DIR);
 
   // Create project deployment
   const { id: deployment_id } = await create_project_deployment(otago_project_slug, otago_api_key, {
-    runtime_version: config.runtime_version,
+    runtime_version: JSON.stringify(config.runtime_versions),
     commit_version: await get_current_git_version(ROOT_DIR),
     config,
   });
@@ -37,22 +37,24 @@ export default async ({ project: otago_project_slug, key: otago_api_key }: { pro
 
   // Generate manifest
   step = step_spinner("Generate manifest");
-  const manifest_android = asset_manifest.android
-    ? get_app_manifest({
-        id: deployment_id,
-        asset_uploaded: asset_manifest.android,
-        runtimeVersion: config.runtime_version,
-        extra: config.extra,
-      })
-    : undefined;
-  const manifest_ios = asset_manifest.ios
-    ? get_app_manifest({
-        id: deployment_id,
-        asset_uploaded: asset_manifest.ios,
-        runtimeVersion: config.runtime_version,
-        extra: config.extra,
-      })
-    : undefined;
+  const manifest_android =
+    asset_manifest.android && config.runtime_versions.android
+      ? get_app_manifest({
+          id: deployment_id,
+          asset_uploaded: asset_manifest.android,
+          runtimeVersion: config.runtime_versions.android,
+          extra: config.extra,
+        })
+      : undefined;
+  const manifest_ios =
+    asset_manifest.ios && config.runtime_versions.ios
+      ? get_app_manifest({
+          id: deployment_id,
+          asset_uploaded: asset_manifest.ios,
+          runtimeVersion: config.runtime_versions.ios,
+          extra: config.extra,
+        })
+      : undefined;
   step.succeed();
 
   // Activate deployment
