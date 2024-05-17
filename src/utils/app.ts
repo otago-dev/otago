@@ -2,21 +2,13 @@ import { existsSync } from "fs";
 import path from "path";
 import { expo_config_get, upload_all_expo_assets } from "./expo";
 
-type APP_TYPE = "expo" | "react-native";
-
-export const get_app_type = async (root_dir: string): Promise<APP_TYPE> => {
-  const {
-    pkg: { dependencies },
-  } = expo_config_get(root_dir);
-  return dependencies?.["expo"] ? "expo" : "react-native";
-};
-
-export const extract_app_config = (app_type: string, root_dir: string) => {
+export const extract_app_config = (root_dir: string) => {
   const config = expo_config_get(root_dir);
 
   let runtime_version = config.exp.runtimeVersion;
   if (typeof runtime_version === "object" && "policy" in runtime_version) {
     // TODO: "nativeVersion" | "appVersion" | "fingerprint";
+    // https://expo.dev/changelog/2024/01-18-sdk-50#introducing-expofingerprint
     if (runtime_version.policy === "sdkVersion") runtime_version = config.exp.sdkVersion;
   }
   if (!runtime_version || typeof runtime_version !== "string") {
@@ -24,7 +16,6 @@ export const extract_app_config = (app_type: string, root_dir: string) => {
   }
 
   return {
-    type: app_type,
     name: config.exp.name,
     icon: config.exp.android?.icon || config.exp.ios?.icon || config.exp.icon || null,
     android_package: config.exp.android?.package,
@@ -36,18 +27,8 @@ export const extract_app_config = (app_type: string, root_dir: string) => {
   };
 };
 
-export const upload_all_assets = async (
-  app_type: APP_TYPE,
-  otago_api_key: string,
-  project_ref: string,
-  root_dir: string,
-) => {
-  if (app_type === "expo") {
-    return upload_all_expo_assets({ otago_api_key, project_ref, root_dir });
-  } else {
-    // TODO: implement react-native upload_all_assets
-    throw new Error("not implemented");
-  }
+export const upload_all_assets = async (otago_api_key: string, project_ref: string, root_dir: string) => {
+  return upload_all_expo_assets({ otago_api_key, project_ref, root_dir });
 };
 
 export const get_app_manifest = ({

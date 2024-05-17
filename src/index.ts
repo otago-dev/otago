@@ -3,8 +3,8 @@
 import { program } from "commander";
 import fs from "fs";
 import path from "path";
-import config from "./config";
 import deploy from "./deploy";
+import doctor from "./doctor";
 
 const { OTAGO_API_KEY, OTAGO_PROJECT } = process.env;
 const { version } = JSON.parse(fs.readFileSync(path.resolve(__dirname, `../package.json`)).toString());
@@ -15,10 +15,11 @@ program
   .version(version, "-v, --version");
 
 program
-  .command("config")
+  .command("doctor")
+  .alias("check-config")
   .requiredOption("-k, --key <api_key>", "API key to authenticate with Otago services.", OTAGO_API_KEY)
   .requiredOption("-p, --project <project>", "Project reference you want to deploy to.", OTAGO_PROJECT)
-  .action(config);
+  .action(doctor);
 
 program
   .command("deploy")

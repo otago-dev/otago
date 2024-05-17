@@ -1,5 +1,5 @@
 import { create_project_deployment, get_project, send_deployment_manifest } from "./utils/api";
-import { extract_app_config, get_app_manifest, get_app_type, upload_all_assets } from "./utils/app";
+import { extract_app_config, get_app_manifest, upload_all_assets } from "./utils/app";
 import { step_spinner } from "./utils/cli";
 import { get_current_git_version } from "./utils/git";
 
@@ -13,10 +13,10 @@ export default async ({ project: otago_project_slug, key: otago_api_key }: { pro
 
   // Set environment variables
   process.env.OTAGO_PROJECT = otago_project_slug;
-  process.env.EXPO_UPDATE_URL = project.manifest_url;
+  process.env.OTAGO_UPDATE_URL = project.manifest_url;
 
-  const app_type = await get_app_type(ROOT_DIR);
-  const config = extract_app_config(app_type, ROOT_DIR);
+  // Get expo-updates config
+  const config = extract_app_config(ROOT_DIR);
 
   // Create project deployment
   const { id: deployment_id } = await create_project_deployment(otago_project_slug, otago_api_key, {
@@ -25,14 +25,14 @@ export default async ({ project: otago_project_slug, key: otago_api_key }: { pro
     config,
   });
 
-  // TODO: Bundle assets
+  // TODO: Bundle assets (npx expo export)
   // TODO: inline env vars from --eas-profile?
   // step = step_spinner("Bundle assets");
   // step.succeed();
 
   // Upload assets
   step = step_spinner("Upload assets");
-  const asset_manifest = await upload_all_assets(app_type, otago_api_key, otago_project_slug, ROOT_DIR);
+  const asset_manifest = await upload_all_assets(otago_api_key, otago_project_slug, ROOT_DIR);
   step.succeed();
 
   // Generate manifest

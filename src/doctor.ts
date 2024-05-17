@@ -1,5 +1,5 @@
 import { get_project } from "./utils/api";
-import { detect_package_manager, get_app_type } from "./utils/app";
+import { detect_package_manager } from "./utils/app";
 import { colored_log, step_spinner } from "./utils/cli";
 import { expo_config_get } from "./utils/expo";
 
@@ -13,10 +13,9 @@ export default async ({ project: otago_project_slug, key: otago_api_key }: { pro
 
   // Set environment variables
   process.env.OTAGO_PROJECT = otago_project_slug;
-  process.env.EXPO_UPDATE_URL = project.manifest_url;
+  process.env.OTAGO_UPDATE_URL = project.manifest_url;
 
   // Get expo-updates config
-  const app_type = await get_app_type(ROOT_DIR);
   const config = expo_config_get(ROOT_DIR);
   const expoConfig = config.exp;
 
@@ -41,12 +40,12 @@ ${add_command} expo-updates
   }
 
   step = step_spinner(`Check native config`);
-  if (app_type === "expo") {
-    step.succeed();
-  } else {
-    // TODO: if react-native, check https://docs.expo.dev/bare/installing-updates/
-    step.succeed();
-  }
+  // TODO: check exp.platforms
+  // https://docs.expo.dev/bare/installing-updates/
+  // TODO: if android, check manifest
+  // TODO: if ios, check Info.plist
+  // TODO: if !android && !ios, check config.exp.(runtimeVersion & updates)...
+  step.succeed();
 
   step = step_spinner("Check runtime version");
   const has_runtime_version = Boolean(expoConfig.runtimeVersion);
@@ -61,7 +60,7 @@ ${add_command} expo-updates
 # app.json or app.config.js
 {
   "expo": {
-    "runtimeVersion": ${app_type === "expo" ? `{ policy: "sdkVersion" }` : `"1.0.0"`},
+    "runtimeVersion": { policy: "sdkVersion" },
     ...
   }
 }
@@ -75,9 +74,10 @@ ${add_command} expo-updates
     step.succeed();
   } else {
     step.fail();
+    // TODO: mismatch: display current and expected
     colored_log(
       "yellow",
-      `Runtime version is missing. Add it to your app.json or app.config.js:
+      `Update URL version ${expoConfig.updates?.url ? "mismatch" : "is missing"}. Add it to your app.json or app.config.js:
 
 # app.json or app.config.js
 {
@@ -95,5 +95,6 @@ ${add_command} expo-updates
   }
 
   // TODO: check updates.codeSigningCertificate
-  // TODO: build & publish notice
+  // TODO: if !signing, propose to generate keys + notice increment runtime version
+  // TODO: build (with env vars!) & store publish notice
 };

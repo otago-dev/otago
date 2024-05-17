@@ -29,6 +29,7 @@ export const get_project = async (project_ref: string, otago_api_key: string) =>
       "Api-Key": otago_api_key,
     },
   });
+  if (!response.ok) throw new Error(`Project not found: ${project_ref}`);
   return (await response.json()) as CompanyProjectDto;
 };
 
