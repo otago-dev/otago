@@ -8,6 +8,7 @@ const ROOT_DIR = ".";
 
 export default async ({ project: otago_project_slug, key: otago_api_key }: { project: string; key: string }) => {
   let step;
+  let success = true;
 
   // Get project
   const project = await get_project(otago_project_slug, otago_api_key);
@@ -136,6 +137,8 @@ Note: if you use multiple environments, you need a dynamic config file:
           step.succeed();
         } else {
           step.fail();
+          success = false;
+
           if (!has_js_engine) {
             colored_log(
               "yellow",
@@ -194,6 +197,7 @@ ext {
           step.succeed();
         } else {
           step.fail();
+          success = false;
 
           if (!has_js_engine) {
             colored_log(
@@ -246,7 +250,15 @@ And replace ":hermes_enabled: ..." with:
     }
   }
 
-  // TODO: check updates.codeSigningCertificate
-  // TODO: if !signing, propose to generate keys + notice increment runtime version
-  // TODO: build (with env vars!) & store publish notice
+  if (success) {
+    if (expo_config.updates?.codeSigningCertificate) {
+      step_spinner(`Code signing configured`).succeed();
+    } else if (expo_config.updates && !expo_config.updates.codeSigningCertificate) {
+      colored_log(
+        "cyan",
+        "\nⓘ  We recommend signing code updates. See https://otago.dev/docs#how-to-sign-deployments for more information.",
+      );
+    }
+    // TODO: [magenta] build (with env vars!) & store publish notice
+  }
 };
