@@ -19,14 +19,16 @@ export default async ({ project: otago_project_slug, key: otago_api_key }: { pro
   const config = await extract_app_config(ROOT_DIR);
 
   // Create project deployment
+  const unique_runtime_versions = [...new Set(Object.values(config.runtime_versions))];
   const { id: deployment_id } = await create_project_deployment(otago_project_slug, otago_api_key, {
-    runtime_version: JSON.stringify(config.runtime_versions),
+    runtime_version:
+      unique_runtime_versions.length <= 1 ? unique_runtime_versions[0] : JSON.stringify(config.runtime_versions),
     commit_version: await get_current_git_version(ROOT_DIR),
     config,
   });
 
   // TODO: Bundle assets (npx expo export)
-  // TODO: inline env vars from --eas-profile?
+  // TODO: inline env vars from --eas-profile? https://docs.expo.dev/eas-update/environment-variables/
   // step = step_spinner("Bundle assets");
   // step.succeed();
 

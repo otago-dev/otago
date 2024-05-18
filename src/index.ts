@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 
 import { program } from "commander";
-import fs from "fs";
-import path from "path";
 import deploy from "./deploy";
 import doctor from "./doctor";
+import { read_file } from "./utils/file";
 
 const { OTAGO_API_KEY, OTAGO_PROJECT } = process.env;
-const { version } = JSON.parse(fs.readFileSync(path.resolve(__dirname, `../package.json`)).toString());
+const { version } = JSON.parse(read_file(__dirname, `../package.json`) || "{}");
 
 program
   .name("otago")

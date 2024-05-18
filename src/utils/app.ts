@@ -1,6 +1,5 @@
-import { existsSync } from "fs";
-import path from "path";
 import { expo_config_get, resolve_runtime_versions, upload_all_expo_assets } from "./expo";
+import { fs_exists } from "./file";
 
 export const extract_app_config = async (root_dir: string) => {
   const { exp } = expo_config_get(root_dir);
@@ -48,9 +47,9 @@ export const get_app_manifest = ({
 };
 
 export const detect_package_manager = async (root_dir: string) => {
-  if (existsSync(path.resolve(root_dir, "yarn.lock"))) return { pm: "yarn", add_command: "yarn add" };
-  if (existsSync(path.resolve(root_dir, "pnpm-lock.yaml"))) return { pm: "pnpm", add_command: "pnpm add" };
-  if (existsSync(path.resolve(root_dir, "bun.lockb"))) return { pm: "bun", add_command: "bun add" };
-  if (existsSync(path.resolve(root_dir, "package-lock.json"))) return { pm: "npm", add_command: "npm install --save" };
+  if (fs_exists(root_dir, "yarn.lock")) return { pm: "yarn", add_command: "yarn add" };
+  if (fs_exists(root_dir, "pnpm-lock.yaml")) return { pm: "pnpm", add_command: "pnpm add" };
+  if (fs_exists(root_dir, "bun.lockb")) return { pm: "bun", add_command: "bun add" };
+  if (fs_exists(root_dir, "package-lock.json")) return { pm: "npm", add_command: "npm install --save" };
   return { pm: null, add_command: "npm install --save" };
 };

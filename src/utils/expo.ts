@@ -1,9 +1,9 @@
 import { getConfig, GetConfigOptions } from "@expo/config";
 import { Updates } from "@expo/config-plugins";
 import * as Fingerprint from "@expo/fingerprint";
-import fs from "fs";
 import path from "path";
 import { upload_deployment_asset } from "./api";
+import { read_file } from "./file";
 
 export type Platform = "android" | "ios";
 type EXPO_METADATA_JSON_PLATFORM = {
@@ -89,9 +89,10 @@ export const upload_all_expo_assets = async ({
   project_ref: string;
   root_dir: string;
 }) => {
-  const { fileMetadata }: EXPO_METADATA_JSON = JSON.parse(
-    fs.readFileSync(path.resolve(root_dir, `./dist/metadata.json`)).toString(),
-  );
+  const metadata_file_content = read_file(root_dir, `./dist/metadata.json`);
+  if (!metadata_file_content) throw new Error("./dist/metadata.json not found");
+
+  const { fileMetadata }: EXPO_METADATA_JSON = JSON.parse(metadata_file_content);
 
   const files_ios_uploading = fileMetadata.ios
     ? expo_asset_upload_plaform({ otago_api_key, project_ref, platform_files: fileMetadata.ios, root_dir })
