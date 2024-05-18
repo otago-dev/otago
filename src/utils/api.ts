@@ -4,10 +4,10 @@ import mime from "mime";
 import fetch from "node-fetch";
 import { create_hash, create_signature } from "./signing";
 
+import type { SigningConfig } from "./signing";
 import type { Manifest } from "./types";
 
 const OTAGO_BASE_URL = process.env.OTAGO_BASE_URL || "https://otago.dev";
-const SIGN_KEY_PATH = process.env.SIGN_KEY_PATH; // TODO: handle sign key path
 
 type CompanyProjectDto = {
   id: string;
@@ -126,6 +126,7 @@ export const send_deployment_manifest = async ({
   otago_project_id,
   otago_api_key,
   otago_project_manifest_url,
+  signing_config,
 }: {
   manifest_android: Manifest | undefined; // used for TS checking
   manifest_ios: Manifest | undefined;
@@ -133,6 +134,7 @@ export const send_deployment_manifest = async ({
   otago_project_id: string;
   otago_api_key: string;
   otago_project_manifest_url: string;
+  signing_config?: SigningConfig;
 }) => {
   const manifest_android_final = manifest_android
     ? {
@@ -165,8 +167,8 @@ export const send_deployment_manifest = async ({
         ? {
             launchable_url: manifest_android.launchAsset.url,
             manifest: manifest_android_final!,
-            signature: SIGN_KEY_PATH
-              ? await create_signature(JSON.stringify(manifest_android_final!), SIGN_KEY_PATH)
+            signature: signing_config
+              ? await create_signature(JSON.stringify(manifest_android_final!), signing_config)
               : null,
           }
         : undefined,
@@ -174,8 +176,8 @@ export const send_deployment_manifest = async ({
         ? {
             launchable_url: manifest_ios.launchAsset.url,
             manifest: manifest_ios_final!,
-            signature: SIGN_KEY_PATH
-              ? await create_signature(JSON.stringify(manifest_ios_final!), SIGN_KEY_PATH)
+            signature: signing_config
+              ? await create_signature(JSON.stringify(manifest_ios_final!), signing_config)
               : null,
           }
         : undefined,

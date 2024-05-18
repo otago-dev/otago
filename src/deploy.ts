@@ -1,11 +1,22 @@
 import { create_project_deployment, get_project, send_deployment_manifest } from "./utils/api";
 import { extract_app_config, get_app_manifest, upload_all_assets } from "./utils/app";
 import { step_spinner } from "./utils/cli";
+import { read_file } from "./utils/file";
 import { get_current_git_version } from "./utils/git";
+
+import type { SigningConfig } from "./utils/signing";
 
 const ROOT_DIR = ".";
 
-export default async ({ project: otago_project_slug, key: otago_api_key }: { project: string; key: string }) => {
+export default async ({
+  project: otago_project_slug,
+  key: otago_api_key,
+  privateKey: private_key_or_path,
+}: {
+  project: string;
+  key: string;
+  privateKey?: string;
+}) => {
   let step;
 
   // Get project
@@ -17,6 +28,30 @@ export default async ({ project: otago_project_slug, key: otago_api_key }: { pro
 
   // Get expo-updates config
   const config = await extract_app_config(ROOT_DIR);
+
+  let signing_config: SigningConfig | undefined;
+  if (config.extra.expoConfig.updates?.codeSigningCertificate) {
+    if (!private_key_or_path) {
+      console.error("error: required option '-pk, --private-key <private_key>' not specified");
+      return;
+    }
+
+    const private_key = /\.pem$/.test(private_key_or_path)
+      ? read_file(private_key_or_path)
+      : private_key_or_path.replace(/\\n/g, "\n");
+
+    if (!private_key) {
+      console.error("error: private key file not found");
+      return;
+    }
+
+    signing_config = {
+      private_key,
+      keyid: "main",
+      alg: "rsa-v1_5-sha256",
+      ...config.extra.expoConfig.updates?.codeSigningMetadata,
+    };
+  }
 
   // Create project deployment
   const unique_runtime_versions = [...new Set(Object.values(config.runtime_versions))];
@@ -68,6 +103,7 @@ export default async ({ project: otago_project_slug, key: otago_api_key }: { pro
     otago_project_id: otago_project_slug,
     otago_api_key,
     otago_project_manifest_url: project.manifest_url,
+    signing_config,
   });
 
   if (ok) {
