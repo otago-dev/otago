@@ -259,6 +259,10 @@ And replace ":hermes_enabled: ..." with:
         "\nⓘ  We recommend signing code updates. See https://otago.dev/docs#how-to-sign-deployments for more information.",
       );
     }
-    // TODO: [magenta] build (with env vars!) & store publish notice
+
+    colored_log(
+      "magenta",
+      "\n✓ Congratulations, your app is now configured for OTA updates!\n⚠ Note that you need to build a version (with all env vars) and publish it so you can send your first code push.",
+    );
   }
 };
