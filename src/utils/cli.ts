@@ -1,4 +1,5 @@
 import cliCursor from "cli-cursor";
+import { exec } from "child_process";
 
 const stream = process.stdout;
 
@@ -91,4 +92,12 @@ export const step_spinner = (text: string) => {
     succeed: () => end(true),
     fail: () => end(false),
   };
+};
+
+export const exec_command = async (root_dir: string, command: string) => {
+  return new Promise<string>((resolve, reject) => {
+    exec(command, { cwd: root_dir }, (error, stdout) => {
+      error ? reject(error) : resolve(stdout);
+    });
+  });
 };

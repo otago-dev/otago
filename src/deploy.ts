@@ -1,6 +1,6 @@
 import { create_project_deployment, get_project, send_deployment_manifest } from "./utils/api";
 import { extract_app_config, get_app_manifest, load_env, upload_all_assets } from "./utils/app";
-import { step_spinner } from "./utils/cli";
+import { exec_command, step_spinner } from "./utils/cli";
 import { expo_config_get, is_supported_platform, Platform } from "./utils/expo";
 import { read_file } from "./utils/file";
 import { get_current_git_version } from "./utils/git";
@@ -77,10 +77,16 @@ export default async ({
     config: app_config,
   });
 
-  // TODO: Bundle assets (npx expo export)
-  // TODO: inline env vars from --eas-profile? https://docs.expo.dev/eas-update/environment-variables/
-  // step = step_spinner("Bundle assets");
-  // step.succeed();
+  // Bundle assets
+  step = step_spinner("Bundle assets");
+  try {
+    await exec_command(ROOT_DIR, "npx expo export");
+    step.succeed();
+  } catch (error) {
+    step.fail();
+    console.error(error);
+    return;
+  }
 
   // Upload assets
   step = step_spinner("Upload assets");

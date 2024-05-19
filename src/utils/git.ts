@@ -1,9 +1,10 @@
-import { exec } from "child_process";
+import { exec_command } from "./cli";
 
 export const get_current_git_version = async (root_dir: string) => {
-  return new Promise<string>((resolve) => {
-    exec("git log --pretty=tformat:%h -n1", { cwd: root_dir }, (error, stdout) => {
-      resolve(error ? "" : stdout.trim());
-    });
-  });
+  try {
+    const stdout = await exec_command(root_dir, "git log --pretty=tformat:%h -n1");
+    return stdout.trim();
+  } catch (error) {
+    return "";
+  }
 };
