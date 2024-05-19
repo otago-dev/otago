@@ -45,79 +45,81 @@ export const create_project_deployment = async (project_ref: string, otago_api_k
   return (await response.json()) as { id: string };
 };
 
-export const upload_deployment_asset = async ({
-  otago_api_key,
-  project_ref,
-  file_absolutepath,
-  file_ext,
-}: {
-  otago_api_key: string;
-  project_ref: string;
-  file_absolutepath: string;
-  file_ext: string;
-}) => {
-  const asset_get_metadata = async (file_path: string, file_ext: string) => {
-    const asset_buffer = await fs.readFile(file_path);
-    const assetHash = create_hash(asset_buffer, "sha256", "base64")
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_")
-      .replace(/=+$/, "");
-    const key = create_hash(asset_buffer, "md5", "hex");
-    const contentType = file_ext === "bundle" ? "application/javascript" : mime.getType(file_ext)!;
+export const upload_deployment_asset = memoize(
+  async ({
+    otago_api_key,
+    project_ref,
+    file_absolutepath,
+    file_ext,
+  }: {
+    otago_api_key: string;
+    project_ref: string;
+    file_absolutepath: string;
+    file_ext: string;
+  }) => {
+    const asset_get_metadata = async (file_path: string, file_ext: string) => {
+      const asset_buffer = await fs.readFile(file_path);
+      const assetHash = create_hash(asset_buffer, "sha256", "base64")
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/, "");
+      const key = create_hash(asset_buffer, "md5", "hex");
+      const contentType = file_ext === "bundle" ? "application/javascript" : mime.getType(file_ext)!;
 
-    return {
-      hash: assetHash,
-      key,
-      fileExtension: `.${file_ext}`,
-      contentType,
+      return {
+        hash: assetHash,
+        key,
+        fileExtension: `.${file_ext}`,
+        contentType,
+      };
     };
-  };
 
-  const file_data = await asset_get_metadata(file_absolutepath, file_ext);
+    const file_data = await asset_get_metadata(file_absolutepath, file_ext);
 
-  const response = await fetch(`${OTAGO_BASE_URL}/api/projects/${project_ref}/assets`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "api-key": otago_api_key,
-    },
-    body: JSON.stringify({
-      filename: file_data.key,
-      hash: file_data.hash,
-      contentType: file_data.contentType,
-    }),
-  });
-  const { upload_url, url } = await response.json();
-
-  if (upload_url) {
-    const payload = createReadStream(file_absolutepath);
-    const file_stat = await fs.stat(file_absolutepath);
-    const uploaded = await fetch(upload_url, {
-      method: "PUT",
-      body: payload,
-      headers: {
-        "Content-Length": file_stat.size.toString(),
-        "Content-Type": file_data.contentType, // not present in r2 presigned url
-      },
-    });
-
-    if (uploaded.status !== 200) {
-      throw new Error(`otago::upload_deployment_asset failed to upload file ${file_absolutepath}`);
-    }
-
-    await fetch(`${OTAGO_BASE_URL}/api/projects/${project_ref}/assets/${file_data.key}/uploaded`, {
+    const response = await fetch(`${OTAGO_BASE_URL}/api/projects/${project_ref}/assets`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "api-key": otago_api_key,
       },
+      body: JSON.stringify({
+        filename: file_data.key,
+        hash: file_data.hash,
+        contentType: file_data.contentType,
+      }),
     });
+    const { upload_url, url } = await response.json();
 
-    return { ...file_data, url, is_newly_uploaded: true };
-  } else {
-    return { ...file_data, url, is_newly_uploaded: false };
-  }
-};
+    if (upload_url) {
+      const payload = createReadStream(file_absolutepath);
+      const file_stat = await fs.stat(file_absolutepath);
+      const uploaded = await fetch(upload_url, {
+        method: "PUT",
+        body: payload,
+        headers: {
+          "Content-Length": file_stat.size.toString(),
+          "Content-Type": file_data.contentType, // not present in r2 presigned url
+        },
+      });
+
+      if (uploaded.status !== 200) {
+        throw new Error(`otago::upload_deployment_asset failed to upload file ${file_absolutepath}`);
+      }
+
+      await fetch(`${OTAGO_BASE_URL}/api/projects/${project_ref}/assets/${file_data.key}/uploaded`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "api-key": otago_api_key,
+        },
+      });
+
+      return { ...file_data, url, is_newly_uploaded: true };
+    } else {
+      return { ...file_data, url, is_newly_uploaded: false };
+    }
+  },
+);
 
 export const send_deployment_manifest = async ({
   manifest_android,
@@ -184,3 +186,13 @@ export const send_deployment_manifest = async ({
     }),
   });
 };
+
+function memoize<P, R>(fn: (...args: P[]) => R) {
+  const cache = new Map();
+  const cached = function (this: unknown, ...val: P[]): R {
+    const key = JSON.stringify(val);
+    return cache.has(key) ? cache.get(key) : cache.set(key, fn.call(this, ...val)) && cache.get(key);
+  };
+  cached.cache = cache;
+  return cached;
+}
