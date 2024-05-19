@@ -1,5 +1,5 @@
 import { create_project_deployment, get_project, send_deployment_manifest } from "./utils/api";
-import { extract_app_config, get_app_manifest, upload_all_assets } from "./utils/app";
+import { extract_app_config, get_app_manifest, load_env, upload_all_assets } from "./utils/app";
 import { step_spinner } from "./utils/cli";
 import { expo_config_get, is_supported_platform, Platform } from "./utils/expo";
 import { read_file } from "./utils/file";
@@ -21,6 +21,9 @@ export default async ({
   platforms: string[];
 }) => {
   let step;
+
+  // Load environment variables
+  load_env(ROOT_DIR, { force: true, silent: true });
 
   // Get project
   const project = await get_project(otago_project_slug, otago_api_key);

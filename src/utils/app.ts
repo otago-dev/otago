@@ -1,8 +1,13 @@
+import { load as expo_load_env } from "@expo/env";
 import { expo_config_get, resolve_runtime_versions, upload_all_expo_assets } from "./expo";
 import { fs_exists } from "./file";
 
 import type { Platform } from "./expo";
 import type { ManifestAsset } from "./types";
+
+export const load_env = async (...params: Parameters<typeof expo_load_env>) => {
+  expo_load_env(...params);
+};
 
 export const extract_app_config = async (
   root_dir: string,
