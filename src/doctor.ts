@@ -1,7 +1,7 @@
 import { get_project } from "./utils/api";
 import { detect_package_manager } from "./utils/app";
 import { colored_log, step_spinner } from "./utils/cli";
-import { expo_config_get, supported_platforms } from "./utils/expo";
+import { expo_config_get, is_supported_platform } from "./utils/expo";
 import { fs_exists, read_file } from "./utils/file";
 
 const ROOT_DIR = ".";
@@ -20,7 +20,7 @@ export default async ({ project: otago_project_slug, key: otago_api_key }: { pro
   // Get expo-updates config
   const config = expo_config_get(ROOT_DIR);
   const expo_config = config.exp;
-  const platforms = expo_config.platforms?.filter((platform) => supported_platforms.some((p) => p === platform)) || [];
+  const platforms = expo_config.platforms?.filter(is_supported_platform) || [];
 
   // Display if config is valid or tips to fix it
 

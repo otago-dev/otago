@@ -1,4 +1,4 @@
-import { expo_config_get, resolve_runtime_versions, upload_all_expo_assets } from "./expo";
+import { expo_config_get, is_supported_platform, resolve_runtime_versions, upload_all_expo_assets } from "./expo";
 import { fs_exists } from "./file";
 
 export const extract_app_config = async (root_dir: string) => {
@@ -10,6 +10,7 @@ export const extract_app_config = async (root_dir: string) => {
 
   return {
     name: exp.name,
+    platforms: exp.platforms?.filter(is_supported_platform) || [],
     icon: exp.android?.icon || exp.ios?.icon || exp.icon || null,
     android_package: exp.android?.package,
     ios_package: exp.ios?.bundleIdentifier,

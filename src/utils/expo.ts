@@ -19,6 +19,9 @@ type EXPO_METADATA_JSON = {
 
 export const supported_platforms: Platform[] = ["android", "ios"] as const;
 
+export const is_supported_platform = (platform: string): platform is Platform =>
+  supported_platforms.some((p) => p === platform);
+
 export const expo_config_get = (root_dir: string, options: GetConfigOptions = {}) => {
   const expo_root_dir = path.resolve(root_dir);
   return getConfig(expo_root_dir, {
