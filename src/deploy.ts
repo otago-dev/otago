@@ -1,6 +1,7 @@
 import { create_project_deployment, get_project, send_deployment_manifest } from "./utils/api";
 import { extract_app_config, get_app_manifest, upload_all_assets } from "./utils/app";
 import { step_spinner } from "./utils/cli";
+import { expo_config_get, is_supported_platform, Platform } from "./utils/expo";
 import { read_file } from "./utils/file";
 import { get_current_git_version } from "./utils/git";
 
@@ -12,10 +13,12 @@ export default async ({
   project: otago_project_slug,
   key: otago_api_key,
   privateKey: private_key_or_path,
+  platforms,
 }: {
   project: string;
   key: string;
   privateKey?: string;
+  platforms: string[];
 }) => {
   let step;
 
@@ -27,10 +30,19 @@ export default async ({
   process.env.OTAGO_UPDATE_URL = project.manifest_url;
 
   // Get expo-updates config
-  const config = await extract_app_config(ROOT_DIR);
+  const config = await expo_config_get(ROOT_DIR);
+  const supported_platform = config.exp.platforms?.filter(is_supported_platform) || [];
+  const target_platforms = supported_platform.filter(
+    (platform) => platforms.length === 0 || platforms.includes(platform),
+  ) as Platform[];
+  if (platforms.length > 0 && target_platforms.length !== platforms.length) {
+    console.error("error: unauthorized platform. Valid platforms are: ", supported_platform?.join(", ") || "none");
+    return;
+  }
+  const app_config = await extract_app_config(ROOT_DIR, config, target_platforms);
 
   let signing_config: SigningConfig | undefined;
-  if (config.extra.expoConfig.updates?.codeSigningCertificate) {
+  if (app_config.extra.expoConfig.updates?.codeSigningCertificate) {
     if (!private_key_or_path) {
       console.error("error: required option '-pk, --private-key <private_key>' not specified");
       return;
@@ -49,17 +61,17 @@ export default async ({
       private_key,
       keyid: "main",
       alg: "rsa-v1_5-sha256",
-      ...config.extra.expoConfig.updates?.codeSigningMetadata,
+      ...app_config.extra.expoConfig.updates?.codeSigningMetadata,
     };
   }
 
   // Create project deployment
-  const unique_runtime_versions = [...new Set(Object.values(config.runtime_versions))];
+  const unique_runtime_versions = [...new Set(Object.values(app_config.runtime_versions))];
   const { id: deployment_id } = await create_project_deployment(otago_project_slug, otago_api_key, {
     runtime_version:
-      unique_runtime_versions.length <= 1 ? unique_runtime_versions[0] : JSON.stringify(config.runtime_versions),
+      unique_runtime_versions.length <= 1 ? unique_runtime_versions[0] : JSON.stringify(app_config.runtime_versions),
     commit_version: await get_current_git_version(ROOT_DIR),
-    config,
+    config: app_config,
   });
 
   // TODO: Bundle assets (npx expo export)
@@ -69,36 +81,29 @@ export default async ({
 
   // Upload assets
   step = step_spinner("Upload assets");
-  const asset_manifest = await upload_all_assets(otago_api_key, otago_project_slug, ROOT_DIR);
+  const asset_manifest = await upload_all_assets(target_platforms, otago_api_key, otago_project_slug, ROOT_DIR);
   step.succeed();
 
   // Generate manifest
   step = step_spinner("Generate manifest");
-  const manifest_android =
-    asset_manifest.android && config.runtime_versions.android
-      ? get_app_manifest({
-          id: deployment_id,
-          asset_uploaded: asset_manifest.android,
-          runtime_version: config.runtime_versions.android,
-          extra: config.extra,
-        })
-      : undefined;
-  const manifest_ios =
-    asset_manifest.ios && config.runtime_versions.ios
-      ? get_app_manifest({
-          id: deployment_id,
-          asset_uploaded: asset_manifest.ios,
-          runtime_version: config.runtime_versions.ios,
-          extra: config.extra,
-        })
-      : undefined;
+  const manifests = Object.fromEntries(
+    target_platforms.map((platform) => [
+      platform,
+      get_app_manifest({
+        id: deployment_id,
+        asset_uploaded: asset_manifest[platform]!,
+        runtime_version: app_config.runtime_versions[platform],
+        extra: app_config.extra,
+      }),
+    ]),
+  ) as Record<Platform, ReturnType<typeof get_app_manifest> | undefined>;
   step.succeed();
 
   // Activate deployment
   step = step_spinner("Deploy");
   const { ok, status, statusText } = await send_deployment_manifest({
-    manifest_android,
-    manifest_ios,
+    manifest_android: manifests.android,
+    manifest_ios: manifests.ios,
     otago_deployment_id: deployment_id,
     otago_project_id: otago_project_slug,
     otago_api_key,

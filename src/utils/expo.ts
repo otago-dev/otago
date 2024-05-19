@@ -5,6 +5,8 @@ import path from "path";
 import { upload_deployment_asset } from "./api";
 import { read_file } from "./file";
 
+import type { ManifestAsset } from "./types";
+
 export type Platform = "android" | "ios";
 type EXPO_METADATA_JSON_PLATFORM = {
   bundle: string;
@@ -34,6 +36,7 @@ export const expo_config_get = (root_dir: string, options: GetConfigOptions = {}
 export const resolve_runtime_versions = async (
   root_dir: string,
   expo_config: ReturnType<typeof expo_config_get>["exp"],
+  platforms: Platform[],
 ) => {
   const resolve_runtime_version = async (platform: Platform) => {
     const runtime_version = await Updates.getRuntimeVersionAsync(
@@ -41,15 +44,21 @@ export const resolve_runtime_versions = async (
       { ...expo_config, runtimeVersion: expo_config.runtimeVersion ?? { policy: "sdkVersion" } },
       platform,
     );
-    return runtime_version === Updates.FINGERPRINT_RUNTIME_VERSION_SENTINEL
-      ? (await Fingerprint.createFingerprintAsync(root_dir)).hash
-      : runtime_version;
+    const resolved_version =
+      runtime_version === Updates.FINGERPRINT_RUNTIME_VERSION_SENTINEL
+        ? (await Fingerprint.createFingerprintAsync(root_dir)).hash
+        : runtime_version;
+
+    if (!resolved_version) {
+      throw new Error(`Failed to resolve runtime version for platform: ${platform}`);
+    }
+
+    return resolved_version;
   };
 
-  return {
-    android: await resolve_runtime_version("android"),
-    ios: await resolve_runtime_version("ios"),
-  };
+  return Object.fromEntries(
+    await Promise.all(platforms.map(async (platform) => [platform, await resolve_runtime_version(platform)])),
+  ) as Record<Platform, string>;
 };
 
 const expo_asset_upload_plaform = async ({
@@ -84,10 +93,12 @@ const expo_asset_upload_plaform = async ({
 };
 
 export const upload_all_expo_assets = async ({
+  platforms,
   otago_api_key,
   project_ref,
   root_dir,
 }: {
+  platforms: Platform[];
   otago_api_key: string;
   project_ref: string;
   root_dir: string;
@@ -97,35 +108,36 @@ export const upload_all_expo_assets = async ({
 
   const { fileMetadata }: EXPO_METADATA_JSON = JSON.parse(metadata_file_content);
 
-  const files_ios_uploading = fileMetadata.ios
-    ? expo_asset_upload_plaform({ otago_api_key, project_ref, platform_files: fileMetadata.ios, root_dir })
-    : Promise.resolve([]);
-  const files_android_uploading = fileMetadata.android
-    ? expo_asset_upload_plaform({ otago_api_key, project_ref, platform_files: fileMetadata.android, root_dir })
-    : Promise.resolve([]);
-
-  // FIXME: concurrency error between ios and android assets
-  // const [files_ios, files_android] = await Promise.all([files_ios_uploading, files_android_uploading]);
-  const files_ios = await files_ios_uploading;
-  const files_android = await files_android_uploading;
+  const files = Object.fromEntries(
+    await Promise.all(
+      platforms.map(async (platform) => {
+        if (!fileMetadata[platform]) throw new Error(`No metadata found for platform: ${platform}`);
+        return [
+          platform,
+          await expo_asset_upload_plaform({
+            otago_api_key,
+            project_ref,
+            platform_files: fileMetadata[platform],
+            root_dir,
+          }),
+        ];
+      }),
+    ),
+  ) as Record<Platform, Awaited<ReturnType<typeof expo_asset_upload_plaform>>>;
 
   return {
-    ios: fileMetadata.ios
-      ? {
-          bundle: [files_ios[0]].map(({ is_newly_uploaded, ...asset }) => asset)[0],
-          assets: files_ios.slice(1).map(({ is_newly_uploaded, ...asset }) => asset),
-        }
-      : undefined,
-    android: fileMetadata.android
-      ? {
-          bundle: [files_android[0]].map(({ is_newly_uploaded, ...asset }) => asset)[0],
-          assets: files_android.slice(1).map(({ is_newly_uploaded, ...asset }) => asset),
-        }
-      : undefined,
+    ...(Object.fromEntries(
+      Object.entries(files).map(([platform, platform_files]) => {
+        const [bundle, ...assets] = platform_files.map(({ is_newly_uploaded, ...asset }) => asset);
+        return [platform, { bundle, assets }];
+      }),
+    ) as Record<Platform, { bundle: ManifestAsset; assets: ManifestAsset[] }>),
 
-    asset_infos: files_ios.concat(files_android).map((file) => ({
-      key: file.key,
-      is_newly_uploaded: file.is_newly_uploaded,
-    })),
+    asset_infos: Object.values(files)
+      .flat()
+      .map((file) => ({
+        key: file.key,
+        is_newly_uploaded: file.is_newly_uploaded,
+      })),
   };
 };

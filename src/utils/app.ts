@@ -1,16 +1,21 @@
-import { expo_config_get, is_supported_platform, resolve_runtime_versions, upload_all_expo_assets } from "./expo";
+import { expo_config_get, resolve_runtime_versions, upload_all_expo_assets } from "./expo";
 import { fs_exists } from "./file";
 
-export const extract_app_config = async (root_dir: string) => {
-  const { exp } = expo_config_get(root_dir);
+import type { Platform } from "./expo";
+import type { ManifestAsset } from "./types";
 
-  if (!exp.platforms) throw new Error("No platform found");
+export const extract_app_config = async (
+  root_dir: string,
+  config: ReturnType<typeof expo_config_get>,
+  platforms: Platform[],
+) => {
+  const { exp } = config;
 
-  const runtime_versions = await resolve_runtime_versions(root_dir, exp);
+  const runtime_versions = await resolve_runtime_versions(root_dir, exp, platforms);
 
   return {
     name: exp.name,
-    platforms: exp.platforms?.filter(is_supported_platform) || [],
+    platforms: exp.platforms,
     icon: exp.android?.icon || exp.ios?.icon || exp.icon || null,
     android_package: exp.android?.package,
     ios_package: exp.ios?.bundleIdentifier,
@@ -21,8 +26,13 @@ export const extract_app_config = async (root_dir: string) => {
   };
 };
 
-export const upload_all_assets = async (otago_api_key: string, project_ref: string, root_dir: string) => {
-  return upload_all_expo_assets({ otago_api_key, project_ref, root_dir });
+export const upload_all_assets = async (
+  platforms: Platform[],
+  otago_api_key: string,
+  project_ref: string,
+  root_dir: string,
+) => {
+  return upload_all_expo_assets({ platforms, otago_api_key, project_ref, root_dir });
 };
 
 export const get_app_manifest = ({
@@ -32,7 +42,7 @@ export const get_app_manifest = ({
   extra,
 }: {
   id: string;
-  asset_uploaded: NonNullable<Awaited<ReturnType<typeof upload_all_assets>>["android"]>;
+  asset_uploaded: { bundle: ManifestAsset; assets: ManifestAsset[] };
   runtime_version: string;
   extra: Record<string, unknown>;
 }) => {

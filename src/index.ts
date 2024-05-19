@@ -26,6 +26,12 @@ program
   .requiredOption("-k, --key <api_key>", "API key to authenticate with Otago services.", OTAGO_API_KEY)
   .requiredOption("-p, --project <project>", "Project reference you want to deploy to.", OTAGO_PROJECT)
   .option("-pk, --private-key <private_key>", "Private key (or its path) to sign your update.", OTAGO_PRIVATE_KEY)
+  .option<string[]>(
+    "-pf, --platforms <platforms>",
+    "Platforms to deploy, comma separated.",
+    (v) => v.split(",").map((v) => v.trim()),
+    [],
+  )
   .action(deploy);
 
 program.parse();
