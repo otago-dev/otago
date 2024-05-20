@@ -1,5 +1,5 @@
 import { get_project } from "./utils/api";
-import { detect_package_manager, load_env } from "./utils/app";
+import { detect_package_manager } from "./utils/app";
 import { colored_log, step_spinner } from "./utils/cli";
 import { expo_config_get, is_supported_platform } from "./utils/expo";
 import { fs_exists, read_file } from "./utils/file";
@@ -9,9 +9,6 @@ const ROOT_DIR = ".";
 export default async ({ project: otago_project_slug, key: otago_api_key }: { project: string; key: string }) => {
   let step;
   let success = true;
-
-  // Load environment variables
-  load_env(ROOT_DIR);
 
   // Get project
   const project = await get_project(otago_project_slug, otago_api_key);
