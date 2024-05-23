@@ -1,7 +1,7 @@
 import { load as expo_load_env } from "@expo/env";
 import { colored_log } from "./cli";
 import { expo_config_get, resolve_runtime_versions, upload_all_expo_assets } from "./expo";
-import { fs_exists, read_file } from "./file";
+import { read_file } from "./file";
 
 import type { Platform } from "./expo";
 import type { ManifestAsset } from "./types";
@@ -96,12 +96,4 @@ export const get_app_manifest = ({
     extra,
     metadata: {},
   };
-};
-
-export const detect_package_manager = async (root_dir: string) => {
-  if (fs_exists(root_dir, "yarn.lock")) return { pm: "yarn", add_command: "yarn add" };
-  if (fs_exists(root_dir, "pnpm-lock.yaml")) return { pm: "pnpm", add_command: "pnpm add" };
-  if (fs_exists(root_dir, "bun.lockb")) return { pm: "bun", add_command: "bun add" };
-  if (fs_exists(root_dir, "package-lock.json")) return { pm: "npm", add_command: "npm install --save" };
-  return { pm: null, add_command: "npm install --save" };
 };

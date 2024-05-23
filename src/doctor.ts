@@ -1,5 +1,4 @@
 import { get_project } from "./utils/api";
-import { detect_package_manager } from "./utils/app";
 import { colored_log, step_spinner } from "./utils/cli";
 import { expo_config_get, get_default_runtime_version_config, is_supported_platform } from "./utils/expo";
 import { fs_exists, read_file } from "./utils/file";
@@ -40,12 +39,11 @@ export default async ({ project: otago_project_slug, key: otago_api_key }: { pro
     step.succeed();
   } else {
     step.fail();
-    const { add_command } = await detect_package_manager(ROOT_DIR);
     colored_log(
       "yellow",
       `Dependency "expo-updates" is missing. Please add it to your package.json:
 
-${add_command} expo-updates
+npx expo install expo-updates
 `,
     );
   }
