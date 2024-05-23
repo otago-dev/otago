@@ -1,7 +1,7 @@
 import { get_project } from "./utils/api";
 import { detect_package_manager } from "./utils/app";
 import { colored_log, step_spinner } from "./utils/cli";
-import { expo_config_get, is_supported_platform } from "./utils/expo";
+import { expo_config_get, get_default_runtime_version_config, is_supported_platform } from "./utils/expo";
 import { fs_exists, read_file } from "./utils/file";
 
 const ROOT_DIR = ".";
@@ -63,7 +63,7 @@ ${add_command} expo-updates
 # app.json or app.config.js
 {
   "expo": {
-    "runtimeVersion": { policy: "sdkVersion" },
+    "runtimeVersion": ${JSON.stringify(get_default_runtime_version_config(config))},
     ...
   }
 }

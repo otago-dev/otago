@@ -2,10 +2,15 @@ import { getConfig, GetConfigOptions } from "@expo/config";
 import { Updates } from "@expo/config-plugins";
 import * as Fingerprint from "@expo/fingerprint";
 import path from "path";
+import semver from "semver";
 import { upload_deployment_asset } from "./api";
 import { read_file } from "./file";
 
 import type { ManifestAsset } from "./types";
+
+// https://github.com/expo/eas-cli/blob/41622c0cd3b03f399c0607b08e80e11eb490618e/packages/eas-cli/src/update/configure.ts#L23-L24
+export const DEFAULT_MANAGED_RUNTIME_VERSION_GTE_SDK_49 = { policy: "appVersion" } as const;
+export const DEFAULT_MANAGED_RUNTIME_VERSION_LTE_SDK_48 = { policy: "sdkVersion" } as const;
 
 export type Platform = "android" | "ios";
 type EXPO_METADATA_JSON_PLATFORM = {
@@ -33,15 +38,25 @@ export const expo_config_get = (root_dir: string, options: GetConfigOptions = {}
   });
 };
 
+export const get_default_runtime_version_config = (config: ReturnType<typeof expo_config_get>) => {
+  const sdk_version = config.pkg.dependencies?.expo;
+
+  return sdk_version && semver.satisfies(sdk_version.replace(/([~^<>=]|\.(x|\*))/g, ""), ">= 49.0.0")
+    ? DEFAULT_MANAGED_RUNTIME_VERSION_GTE_SDK_49
+    : DEFAULT_MANAGED_RUNTIME_VERSION_LTE_SDK_48;
+};
+
 export const resolve_runtime_versions = async (
   root_dir: string,
-  expo_config: ReturnType<typeof expo_config_get>["exp"],
+  config: ReturnType<typeof expo_config_get>,
   platforms: Platform[],
 ) => {
+  const expo_config = config.exp;
+
   const resolve_runtime_version = async (platform: Platform) => {
     const runtime_version = await Updates.getRuntimeVersionAsync(
       root_dir,
-      { ...expo_config, runtimeVersion: expo_config.runtimeVersion ?? { policy: "sdkVersion" } },
+      { ...expo_config, runtimeVersion: expo_config.runtimeVersion ?? get_default_runtime_version_config(config) },
       platform,
     );
     const resolved_version =

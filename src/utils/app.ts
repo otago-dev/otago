@@ -52,7 +52,7 @@ export const extract_app_config = async (
 ) => {
   const { exp } = config;
 
-  const runtime_versions = await resolve_runtime_versions(root_dir, exp, platforms);
+  const runtime_versions = await resolve_runtime_versions(root_dir, config, platforms);
 
   return {
     name: exp.name,
