@@ -4,10 +4,13 @@ import { program } from "commander";
 import deploy from "./deploy";
 import doctor from "./doctor";
 import { load_env } from "./utils/app";
+import { colored_log } from "./utils/cli";
 import { read_file } from "./utils/file";
 
 // Load environment variables
-load_env(".", { silent: true }); // can be deactivated with EXPO_NO_DOTENV=1
+process.env.NODE_ENV = process.env.NODE_ENV || "production";
+colored_log("gray", `NODE_ENV: ${process.env.NODE_ENV}`);
+load_env("."); // can be deactivated with EXPO_NO_DOTENV=1
 
 const { OTAGO_API_KEY, OTAGO_PRIVATE_KEY, OTAGO_PROJECT } = process.env;
 const { version } = JSON.parse(read_file(__dirname, `../package.json`) || "{}");
