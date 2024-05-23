@@ -13,10 +13,6 @@ export default async ({ project: otago_project_slug, key: otago_api_key }: { pro
   // Get project
   const project = await get_project(otago_project_slug, otago_api_key);
 
-  // Set environment variables
-  process.env.OTAGO_PROJECT = otago_project_slug;
-  process.env.OTAGO_UPDATE_URL = project.manifest_url;
-
   // Get expo-updates config
   const config = expo_config_get(ROOT_DIR);
   const expo_config = config.exp;
@@ -252,6 +248,7 @@ And replace ":hermes_enabled: ..." with:
 
   if (success) {
     if (expo_config.updates?.codeSigningCertificate) {
+      // TODO: check native configs for code signing
       step_spinner(`Code signing configured`).succeed();
     } else if (expo_config.updates && !expo_config.updates.codeSigningCertificate) {
       colored_log(

@@ -1,12 +1,48 @@
 import { load as expo_load_env } from "@expo/env";
+import { colored_log } from "./cli";
 import { expo_config_get, resolve_runtime_versions, upload_all_expo_assets } from "./expo";
-import { fs_exists } from "./file";
+import { fs_exists, read_file } from "./file";
 
 import type { Platform } from "./expo";
 import type { ManifestAsset } from "./types";
 
-export const load_env = async (...params: Parameters<typeof expo_load_env>) => {
-  expo_load_env(...params);
+const DEFAULT_NODE_ENV = "production";
+const DEFAULT_EAS_PROFILE = "production";
+
+export const load_env = async (root_dir: string) => {
+  // Load environment variables
+  if (!process.env.NODE_ENV) {
+    process.env.NODE_ENV = DEFAULT_NODE_ENV;
+    colored_log("gray", `NODE_ENV not defined, using default: ${process.env.NODE_ENV}`);
+  }
+  // XXX: ignore env files in .gitignore or .easignore?
+  expo_load_env(root_dir); // can be deactivated with EXPO_NO_DOTENV=1
+
+  const eas_config = read_file(root_dir, "eas.json");
+  if (eas_config) {
+    if (!process.env.EAS_PROFILE) {
+      process.env.EAS_PROFILE = DEFAULT_EAS_PROFILE;
+      colored_log("gray", `EAS_PROFILE not defined, using default: ${process.env.EAS_PROFILE}`);
+    }
+
+    const { build } = JSON.parse(eas_config);
+    const eas_profile = build?.[process.env.EAS_PROFILE];
+    if (!eas_profile) {
+      colored_log("yellow", `EAS_PROFILE: ${process.env.EAS_PROFILE} not found in eas.json`);
+    } else if (eas_profile.env) {
+      colored_log("gray", `env: load eas.json[${process.env.EAS_PROFILE}].env`);
+      const eas_envs: string[] = [];
+      Object.entries(eas_profile.env).forEach(([key, value]) => {
+        if (!process.env[key]) {
+          process.env[key] = value as string;
+          eas_envs.push(key);
+        }
+      });
+      if (eas_envs.length > 0) {
+        colored_log("gray", `env: export ${eas_envs.join(", ")}`);
+      }
+    }
+  }
 };
 
 export const extract_app_config = async (

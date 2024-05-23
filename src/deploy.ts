@@ -25,10 +25,6 @@ export default async ({
   // Get project
   const project = await get_project(otago_project_slug, otago_api_key);
 
-  // Set environment variables
-  process.env.OTAGO_PROJECT = otago_project_slug;
-  process.env.OTAGO_UPDATE_URL = project.manifest_url;
-
   // Get expo-updates config
   const config = await expo_config_get(ROOT_DIR);
   const supported_platform = config.exp.platforms?.filter(is_supported_platform) || [];
