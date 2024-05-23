@@ -168,7 +168,7 @@ export const send_deployment_manifest = async ({
       android: manifest_android
         ? {
             launchable_url: manifest_android.launchAsset.url,
-            manifest: manifest_android_final!,
+            manifest_raw: JSON.stringify(manifest_android_final!),
             signature: signing_config
               ? await create_signature(JSON.stringify(manifest_android_final!), signing_config)
               : null,
@@ -177,7 +177,7 @@ export const send_deployment_manifest = async ({
       ios: manifest_ios
         ? {
             launchable_url: manifest_ios.launchAsset.url,
-            manifest: manifest_ios_final!,
+            manifest_raw: JSON.stringify(manifest_ios_final!),
             signature: signing_config
               ? await create_signature(JSON.stringify(manifest_ios_final!), signing_config)
               : null,
