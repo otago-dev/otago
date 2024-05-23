@@ -27,7 +27,7 @@ export const extract_app_config = async (
     runtime_versions,
     version: exp.version,
     scheme: Array.isArray(exp.scheme) ? exp.scheme[0] : exp.scheme,
-    extra: { expoConfig: exp },
+    extra: { expoClient: exp },
   };
 };
 

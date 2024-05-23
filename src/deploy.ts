@@ -42,7 +42,7 @@ export default async ({
   const app_config = await extract_app_config(ROOT_DIR, config, target_platforms);
 
   let signing_config: SigningConfig | undefined;
-  if (app_config.extra.expoConfig.updates?.codeSigningCertificate) {
+  if (app_config.extra.expoClient.updates?.codeSigningCertificate) {
     if (!private_key_or_path) {
       console.error("error: required option '-pk, --private-key <private_key>' not specified");
       return;
@@ -61,7 +61,7 @@ export default async ({
       private_key,
       keyid: "main",
       alg: "rsa-v1_5-sha256",
-      ...app_config.extra.expoConfig.updates?.codeSigningMetadata,
+      ...app_config.extra.expoClient.updates?.codeSigningMetadata,
     };
   }
 
