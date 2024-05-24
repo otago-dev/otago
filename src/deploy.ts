@@ -73,7 +73,7 @@ export default async ({
   // Bundle assets
   step = step_spinner("Bundle assets");
   try {
-    await exec_command(ROOT_DIR, "npx expo export --dump-sourcemap");
+    await exec_command(ROOT_DIR, "npx expo export --dump-sourcemap --clear");
     step.succeed();
   } catch (error) {
     step.fail();
