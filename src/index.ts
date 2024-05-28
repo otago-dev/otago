@@ -6,15 +6,17 @@ import doctor from "./doctor";
 import { load_env } from "./utils/app";
 import { read_file } from "./utils/file";
 
-load_env(".");
-
-const { OTAGO_API_KEY, OTAGO_PRIVATE_KEY, OTAGO_PROJECT } = process.env;
 const { version } = JSON.parse(read_file(__dirname, `../package.json`) || "{}");
 
 program
   .name("otago")
   .description("CLI to deploy your code pushes with Otago services.")
   .version(version, "-v, --version");
+
+if (["doctor", "deploy"].includes(process.argv[2])) {
+  load_env(".");
+}
+const { OTAGO_API_KEY, OTAGO_PRIVATE_KEY, OTAGO_PROJECT } = process.env;
 
 program
   .command("doctor")
