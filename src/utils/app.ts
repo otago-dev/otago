@@ -10,6 +10,8 @@ const DEFAULT_NODE_ENV = "production";
 const DEFAULT_EAS_PROFILE = "production";
 
 export const load_env = async (root_dir: string) => {
+  if (process.env.OTAGO_LOAD_ENVS === "false") return;
+
   // Load environment variables
   if (!process.env.NODE_ENV) {
     process.env.NODE_ENV = DEFAULT_NODE_ENV;
