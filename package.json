@@ -21,7 +21,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@expo/config": "^9.0.1",
+    "@expo/config": "^9.0.2",
     "@expo/config-plugins": "^8.0.4",
     "@expo/env": "^0.3.0",
     "@expo/fingerprint": "^0.7.1",
