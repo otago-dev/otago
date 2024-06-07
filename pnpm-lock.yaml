@@ -15,8 +15,8 @@ dependencies:
     specifier: ^0.3.0
     version: 0.3.0
   '@expo/fingerprint':
-    specifier: ^0.7.1
-    version: 0.7.1
+    specifier: ^0.9.0
+    version: 0.9.0
   cli-cursor:
     specifier: ^3.1.0
     version: 3.1.0
@@ -420,8 +420,8 @@ packages:
       - supports-color
     dev: false
 
-  /@expo/fingerprint@0.7.1:
-    resolution: {integrity: sha512-lbTwFiIk0lOm9zzPRvnC45GfPqXqPB3w4hDDKVma+8FDAbPCWhNN42ltLhx/ekwcHFQxURmg0fHm59k0Vy+jtw==}
+  /@expo/fingerprint@0.9.0:
+    resolution: {integrity: sha512-kSZ6gkTS9/+PxHmrFimRQINPFfvwDuENzSuRJul+Mdni9iJBnKODHLbWjAoG6GDnMOhSJ5AEdzjJeRalCmtwxw==}
     hasBin: true
     dependencies:
       '@expo/spawn-async': 1.7.2
