@@ -71,7 +71,7 @@ const replace = (text: string) => {
   stream.write(text);
 };
 
-export const step_spinner = (text: string) => {
+const dynamic_spinner = (text: string) => {
   cliCursor.hide(stream);
 
   let i = 0;
@@ -88,6 +88,22 @@ export const step_spinner = (text: string) => {
     cliCursor.show(stream);
   };
 
+  return end;
+};
+
+const no_spinner = (text: string) => {
+  const delay_step = setTimeout(() => colored_log("gray", `${text}...`), 50);
+
+  const end = (is_success: boolean) => {
+    clearTimeout(delay_step);
+    colored_log(is_success ? "green" : "red", `${is_success ? "✓" : "✗"} ${text}`);
+  };
+
+  return end;
+};
+
+export const step_spinner = (text: string) => {
+  const end = stream.clearLine !== undefined ? no_spinner(text) : dynamic_spinner(text);
   return {
     succeed: () => end(true),
     fail: () => end(false),
