@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { program } from "commander";
+import { Option, program } from "commander";
 import deploy from "./deploy";
 import doctor from "./doctor";
 import { load_env } from "./utils/app";
@@ -16,26 +16,49 @@ program
 if (["doctor", "deploy"].includes(process.argv[2])) {
   load_env(".");
 }
-const { OTAGO_API_KEY, OTAGO_PRIVATE_KEY, OTAGO_PROJECT } = process.env;
+const { OTAGO_API_KEY, OTAGO_PLATFORMS, OTAGO_PRIVATE_KEY, OTAGO_PROJECT } = process.env;
 
 program
   .command("doctor")
   .alias("check-config")
-  .requiredOption("-k, --key <api_key>", "API key to authenticate with Otago services.", OTAGO_API_KEY)
-  .requiredOption("-p, --project <project>", "Project reference you want to deploy to.", OTAGO_PROJECT)
+  .addOption(
+    new Option("-k, --key <api_key>", "API key to authenticate with Otago services.")
+      .makeOptionMandatory()
+      .env("OTAGO_API_KEY")
+      .default(OTAGO_API_KEY, "*****"),
+  )
+  .addOption(
+    new Option("-p, --project <project>", "Project reference you want to deploy to.")
+      .makeOptionMandatory()
+      .env("OTAGO_PROJECT")
+      .default(OTAGO_PROJECT),
+  )
   .action(doctor);
 
 program
   .command("deploy")
   .description("Deploy your code pushes with Otago services.")
-  .requiredOption("-k, --key <api_key>", "API key to authenticate with Otago services.", OTAGO_API_KEY)
-  .requiredOption("-p, --project <project>", "Project reference you want to deploy to.", OTAGO_PROJECT)
-  .option("-pk, --private-key <private_key>", "Private key (or its path) to sign your update.", OTAGO_PRIVATE_KEY)
-  .option<string[]>(
-    "-pf, --platforms <platforms>",
-    "Platforms to deploy, comma separated.",
-    (v) => v.split(",").map((v) => v.trim()),
-    [],
+  .addOption(
+    new Option("-k, --key <api_key>", "API key to authenticate with Otago services.")
+      .makeOptionMandatory()
+      .env("OTAGO_API_KEY")
+      .default(OTAGO_API_KEY, "*****"),
+  )
+  .addOption(
+    new Option("-p, --project <project>", "Project reference you want to deploy to.")
+      .makeOptionMandatory()
+      .env("OTAGO_PROJECT")
+      .default(OTAGO_PROJECT),
+  )
+  .addOption(
+    new Option("-pk, --private-key <private_key>", "Private key (or its path) to sign your update.")
+      .env("OTAGO_PRIVATE_KEY")
+      .default(OTAGO_PRIVATE_KEY, "*****"),
+  )
+  .addOption(
+    new Option("-pf, --platforms <platforms>", "Platforms to deploy, comma separated.")
+      .env("OTAGO_PLATFORMS")
+      .default(OTAGO_PLATFORMS || "all"),
   )
   .action(deploy);
 

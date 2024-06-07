@@ -13,12 +13,12 @@ export default async ({
   project: otago_project_slug,
   key: otago_api_key,
   privateKey: private_key_or_path,
-  platforms,
+  platforms: platforms_param,
 }: {
   project: string;
   key: string;
   privateKey?: string;
-  platforms: string[];
+  platforms: string;
 }) => {
   let step;
 
@@ -27,12 +27,13 @@ export default async ({
 
   // Get expo-updates config
   const config = await expo_config_get(ROOT_DIR);
+  const platforms = platforms_param.split(",").map((platform) => platform.trim());
   const supported_platform = config.exp.platforms?.filter(is_supported_platform) || [];
   const target_platforms = supported_platform.filter(
-    (platform) => platforms.length === 0 || platforms.includes(platform),
+    (platform) => platforms.includes(platform) || platforms.includes("all"),
   ) as Platform[];
-  if (platforms.length > 0 && target_platforms.length !== platforms.length) {
-    console.error("error: unauthorized platform. Valid platforms are: ", supported_platform?.join(", ") || "none");
+  if (!platforms.includes("all") && target_platforms.length !== platforms.length) {
+    console.error("error: unauthorized platform. Valid platforms are:", supported_platform?.join(", ") || "none");
     return;
   }
   const app_config = await extract_app_config(ROOT_DIR, config, target_platforms);
