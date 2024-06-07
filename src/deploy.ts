@@ -40,7 +40,9 @@ export default async ({
   let signing_config: SigningConfig | undefined;
   if (app_config.extra.expoClient.updates?.codeSigningCertificate) {
     if (!private_key_or_path) {
-      console.error("error: required option '-pk, --private-key <private_key>' not specified");
+      console.error(
+        "error: your app config contains code signing, so your private key is required: '-pk, --private-key <private_key>'",
+      );
       return;
     }
 
@@ -73,6 +75,7 @@ export default async ({
   // Bundle assets
   step = step_spinner("Bundle assets");
   try {
+    // Note: --clear is used to avoid cache problem if the file doesn't change but the env vars do.
     await exec_command(ROOT_DIR, "npx expo export --dump-sourcemap --clear");
     step.succeed();
   } catch (error) {
