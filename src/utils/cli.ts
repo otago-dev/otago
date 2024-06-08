@@ -103,7 +103,7 @@ const no_spinner = (text: string) => {
 };
 
 export const step_spinner = (text: string) => {
-  const end = stream.clearLine !== undefined ? no_spinner(text) : dynamic_spinner(text);
+  const end = stream.clearLine === undefined ? no_spinner(text) : dynamic_spinner(text);
   return {
     succeed: () => end(true),
     fail: () => end(false),
