@@ -28,7 +28,7 @@ export default async ({ project: otago_project_slug, key: otago_api_key }: { pro
       "red",
       `No platforms detected. There is something wrong with your expo config, have you installed expo modules? See https://docs.expo.dev/bare/installing-expo-modules/`,
     );
-    return;
+    process.exit(1);
   }
 
   step = step_spinner("Check expo-updates dependency");
@@ -110,7 +110,7 @@ Note: if you use multiple environments, you need a dynamic config file:
   }
 
   if (!has_expo_updates || !has_runtime_version || !has_update_url) {
-    return;
+    process.exit(1);
   }
 
   for (const platform of platforms) {
@@ -259,5 +259,7 @@ And replace ":hermes_enabled: ..." with:
       "magenta",
       "\n✓ Congratulations, your app is now configured for OTA updates!\n⚠ Note that you need to build a version (with all env vars) and publish it so you can send your first code push.",
     );
+  } else {
+    process.exit(1);
   }
 };

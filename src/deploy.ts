@@ -34,7 +34,7 @@ export default async ({
   ) as Platform[];
   if (!platforms.includes("all") && target_platforms.length !== platforms.length) {
     console.error("error: unauthorized platform. Valid platforms are:", supported_platform?.join(", ") || "none");
-    return;
+    process.exit(1);
   }
   const app_config = await extract_app_config(ROOT_DIR, config, target_platforms);
 
@@ -44,7 +44,7 @@ export default async ({
       console.error(
         "error: your app config contains code signing, so your private key is required: '-pk, --private-key <private_key>'",
       );
-      return;
+      process.exit(1);
     }
 
     const private_key = /\.pem$/.test(private_key_or_path)
@@ -53,7 +53,7 @@ export default async ({
 
     if (!private_key) {
       console.error("error: private key file not found");
-      return;
+      process.exit(1);
     }
 
     signing_config = {
@@ -82,7 +82,7 @@ export default async ({
   } catch (error) {
     step.fail();
     console.error(error);
-    return;
+    process.exit(1);
   }
 
   // Upload assets
@@ -121,6 +121,7 @@ export default async ({
     step.succeed();
   } else {
     step.fail();
-    throw new Error(`otago::deployments: ${status} ${statusText}`);
+    console.error(`otago::deployments: ${status} ${statusText}`);
+    process.exit(1);
   }
 };
