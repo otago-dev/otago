@@ -51,14 +51,14 @@ program
       .default(OTAGO_PROJECT),
   )
   .addOption(
-    new Option("-pk, --private-key <private_key>", "Private key (or its path) to sign your update.")
-      .env("OTAGO_PRIVATE_KEY")
-      .default(OTAGO_PRIVATE_KEY, "*****"),
-  )
-  .addOption(
     new Option("-pf, --platforms <platforms>", "Platforms to deploy, comma separated.")
       .env("OTAGO_PLATFORMS")
       .default(OTAGO_PLATFORMS || "all"),
+  )
+  .addOption(
+    new Option("-pk, --private-key <private_key>", "Private key (or its path) to sign your update.")
+      .env("OTAGO_PRIVATE_KEY")
+      .default(OTAGO_PRIVATE_KEY, "*****"),
   )
   .action(deploy);
 
