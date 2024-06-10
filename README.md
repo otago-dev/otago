@@ -46,7 +46,7 @@
 
 ## Overview
 
-Otago is a custom server for expo-updates library. When the SDK in installed on your mobile application, each time a user starts the app, it will check on Otago for updates. If there is a new version, it is downloaded and installed.
+Otago is a custom server for expo-updates library. When the SDK is installed on your mobile application, each time a user starts the app, it will check on Otago for updates. If there is a new version, it is downloaded and installed.
 
 <p align="center">
   <img src="https://otago.dev/images/docs/global-architecture.png" alt="Architecture" width="512"/>
