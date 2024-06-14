@@ -42,6 +42,7 @@ export const create_project_deployment = async (project_ref: string, otago_api_k
     },
     body: JSON.stringify(params),
   });
+  if (!response.ok) throw new Error(`Error creating deployment: ${response.statusText}`);
   return (await response.json()) as { id: string };
 };
 
