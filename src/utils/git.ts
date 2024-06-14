@@ -5,7 +5,9 @@ export const get_current_git_version = async (root_dir: string) => {
   try {
     const stdout = await exec_command(root_dir, "git rev-parse --short HEAD");
     commit_tag_gitcli = stdout.trim();
-  } catch (error) {}
+  } catch (error) {
+    // noop
+  }
 
   const commit_tag_github = (process.env.GITHUB_SHA || "").substring(0, 7);
   const commit_tag_gitlab = process.env.CI_COMMIT_SHORT_SHA;
