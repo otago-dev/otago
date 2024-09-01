@@ -18,8 +18,8 @@ importers:
         specifier: ^0.3.0
         version: 0.3.0
       '@expo/fingerprint':
-        specifier: ^0.9.0
-        version: 0.9.0
+        specifier: ^0.10.3
+        version: 0.10.3
       cli-cursor:
         specifier: ^3.1.0
         version: 3.1.0
@@ -267,8 +267,8 @@ packages:
   '@expo/env@0.3.0':
     resolution: {integrity: sha512-OtB9XVHWaXidLbHvrVDeeXa09yvTl3+IQN884sO6PhIi2/StXfgSH/9zC7IvzrDB8kW3EBJ1PPLuCUJ2hxAT7Q==}
 
-  '@expo/fingerprint@0.9.0':
-    resolution: {integrity: sha512-kSZ6gkTS9/+PxHmrFimRQINPFfvwDuENzSuRJul+Mdni9iJBnKODHLbWjAoG6GDnMOhSJ5AEdzjJeRalCmtwxw==}
+  '@expo/fingerprint@0.10.3':
+    resolution: {integrity: sha512-h/BnnyloJyMSrzeXonKLE6HfiMpRg3e9m8CAv+eUaAozG9heKMG9ftHW4cfm2StDYj/rWjFc5YK6MSIX6qd+xg==}
     hasBin: true
 
   '@expo/json-file@8.3.3':
@@ -2595,7 +2595,7 @@ snapshots:
   '@eslint/config-array@0.17.0':
     dependencies:
       '@eslint/object-schema': 2.1.4
-      debug: 4.3.5
+      debug: 4.3.6
       minimatch: 3.1.2
     transitivePeerDependencies:
       - supports-color
@@ -2603,7 +2603,7 @@ snapshots:
   '@eslint/eslintrc@3.1.0':
     dependencies:
       ajv: 6.12.6
-      debug: 4.3.5
+      debug: 4.3.6
       espree: 10.1.0
       globals: 14.0.0
       ignore: 5.3.1
@@ -2666,11 +2666,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@expo/fingerprint@0.9.0':
+  '@expo/fingerprint@0.10.3':
     dependencies:
       '@expo/spawn-async': 1.7.2
       chalk: 4.1.2
-      debug: 4.3.5
+      debug: 4.3.6
       find-up: 5.0.0
       minimatch: 3.1.2
       p-limit: 3.1.0
@@ -2868,7 +2868,7 @@ snapshots:
       conventional-changelog-writer: 8.0.0
       conventional-commits-filter: 5.0.0
       conventional-commits-parser: 6.0.0
-      debug: 4.3.5
+      debug: 4.3.6
       import-from-esm: 1.3.4
       lodash-es: 4.17.21
       micromatch: 4.0.7
@@ -2902,7 +2902,7 @@ snapshots:
       '@octokit/plugin-throttling': 9.3.0(@octokit/core@6.1.2)
       '@semantic-release/error': 4.0.0
       aggregate-error: 5.0.0
-      debug: 4.3.5
+      debug: 4.3.6
       dir-glob: 3.0.1
       globby: 14.0.2
       http-proxy-agent: 7.0.2
@@ -2939,7 +2939,7 @@ snapshots:
       conventional-changelog-writer: 8.0.0
       conventional-commits-filter: 5.0.0
       conventional-commits-parser: 6.0.0
-      debug: 4.3.5
+      debug: 4.3.6
       get-stream: 7.0.1
       import-from-esm: 1.3.4
       into-stream: 7.0.0
@@ -3065,7 +3065,7 @@ snapshots:
 
   agent-base@7.1.1:
     dependencies:
-      debug: 4.3.5
+      debug: 4.3.6
     transitivePeerDependencies:
       - supports-color
 
@@ -3859,14 +3859,14 @@ snapshots:
   http-proxy-agent@7.0.2:
     dependencies:
       agent-base: 7.1.1
-      debug: 4.3.5
+      debug: 4.3.6
     transitivePeerDependencies:
       - supports-color
 
   https-proxy-agent@7.0.4:
     dependencies:
       agent-base: 7.1.1
-      debug: 4.3.5
+      debug: 4.3.6
     transitivePeerDependencies:
       - supports-color
 
@@ -3885,7 +3885,7 @@ snapshots:
 
   import-from-esm@1.3.4:
     dependencies:
-      debug: 4.3.5
+      debug: 4.3.6
       import-meta-resolve: 4.1.0
     transitivePeerDependencies:
       - supports-color
