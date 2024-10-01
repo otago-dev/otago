@@ -12,8 +12,8 @@ importers:
         specifier: ^9.0.3
         version: 9.0.3
       '@expo/config-plugins':
-        specifier: ^8.0.8
-        version: 8.0.8
+        specifier: ^8.0.9
+        version: 8.0.9
       '@expo/env':
         specifier: ^0.3.0
         version: 0.3.0
@@ -255,11 +255,14 @@ packages:
     resolution: {integrity: sha512-BsWiH1yFGjXXS2yvrf5LyuoSIIbPrGUWob917o+BTKuZ7qJdxX8aJLRxs1fS9n6r7vESrq1OUqb68dANcFXuQQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@expo/config-plugins@8.0.8':
-    resolution: {integrity: sha512-Fvu6IO13EUw0R9WeqxUO37FkM62YJBNcZb9DyJAOgMz7Ez/vaKQGEjKt9cwT+Q6uirtCATMgaq6VWAW7YW8xXw==}
+  '@expo/config-plugins@8.0.9':
+    resolution: {integrity: sha512-dNCG45C7BbDPV9MdWvCbsFtJtVn4w/TJbb5b7Yr6FA8HYIlaaVM0wqUMzTPmGj54iYXw8X/Vge8uCPxg7RWgeA==}
 
   '@expo/config-types@51.0.2':
     resolution: {integrity: sha512-IglkIoiDwJMY01lYkF/ZSBoe/5cR+O3+Gx6fpLFjLfgZGBTdyPkKa1g8NWoWQCk+D3cKL2MDbszT2DyRRB0YqQ==}
+
+  '@expo/config-types@51.0.3':
+    resolution: {integrity: sha512-hMfuq++b8VySb+m9uNNrlpbvGxYc8OcFCUX9yTmi9tlx6A4k8SDabWFBgmnr4ao3wEArvWrtUQIfQCVtPRdpKA==}
 
   '@expo/config@9.0.3':
     resolution: {integrity: sha512-eOTNM8eOC8gZNHgenySRlc/lwmYY1NOgvjwA8LHuvPT7/eUwD93zrxu3lPD1Cc/P6C/2BcVdfH4hf0tLmDxnsg==}
@@ -893,6 +896,15 @@ packages:
 
   debug@4.3.6:
     resolution: {integrity: sha512-O/09Bd4Z1fBrU4VzkhFqVgpPzaGbw6Sm9FEkBT1A/YBXQFGuuSxa1dN2nxgxS34JmKXqYx8CZAwEVoJFImUXIg==}
+    engines: {node: '>=6.0'}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
+
+  debug@4.3.7:
+    resolution: {integrity: sha512-Er2nc/H7RrMXZBFCEim6TCmMk02Z8vLC2Rbi1KEBggpo0fS6l0S1nnapwmIi3yW/+GOJap1Krg4w0Hg80oCqgQ==}
     engines: {node: '>=6.0'}
     peerDependencies:
       supports-color: '*'
@@ -1640,6 +1652,9 @@ packages:
 
   ms@2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
+
+  ms@2.1.3:
+    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
   mz@2.7.0:
     resolution: {integrity: sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q==}
@@ -2595,7 +2610,7 @@ snapshots:
   '@eslint/config-array@0.17.0':
     dependencies:
       '@eslint/object-schema': 2.1.4
-      debug: 4.3.6
+      debug: 4.3.5
       minimatch: 3.1.2
     transitivePeerDependencies:
       - supports-color
@@ -2603,7 +2618,7 @@ snapshots:
   '@eslint/eslintrc@3.1.0':
     dependencies:
       ajv: 6.12.6
-      debug: 4.3.6
+      debug: 4.3.5
       espree: 10.1.0
       globals: 14.0.0
       ignore: 5.3.1
@@ -2618,14 +2633,14 @@ snapshots:
 
   '@eslint/object-schema@2.1.4': {}
 
-  '@expo/config-plugins@8.0.8':
+  '@expo/config-plugins@8.0.9':
     dependencies:
-      '@expo/config-types': 51.0.2
+      '@expo/config-types': 51.0.3
       '@expo/json-file': 8.3.3
       '@expo/plist': 0.1.3
       '@expo/sdk-runtime-versions': 1.0.0
       chalk: 4.1.2
-      debug: 4.3.6
+      debug: 4.3.7
       find-up: 5.0.0
       getenv: 1.0.0
       glob: 7.1.6
@@ -2640,10 +2655,12 @@ snapshots:
 
   '@expo/config-types@51.0.2': {}
 
+  '@expo/config-types@51.0.3': {}
+
   '@expo/config@9.0.3':
     dependencies:
       '@babel/code-frame': 7.10.4
-      '@expo/config-plugins': 8.0.8
+      '@expo/config-plugins': 8.0.9
       '@expo/config-types': 51.0.2
       '@expo/json-file': 8.3.3
       getenv: 1.0.0
@@ -2868,7 +2885,7 @@ snapshots:
       conventional-changelog-writer: 8.0.0
       conventional-commits-filter: 5.0.0
       conventional-commits-parser: 6.0.0
-      debug: 4.3.6
+      debug: 4.3.5
       import-from-esm: 1.3.4
       lodash-es: 4.17.21
       micromatch: 4.0.7
@@ -2902,7 +2919,7 @@ snapshots:
       '@octokit/plugin-throttling': 9.3.0(@octokit/core@6.1.2)
       '@semantic-release/error': 4.0.0
       aggregate-error: 5.0.0
-      debug: 4.3.6
+      debug: 4.3.5
       dir-glob: 3.0.1
       globby: 14.0.2
       http-proxy-agent: 7.0.2
@@ -2939,7 +2956,7 @@ snapshots:
       conventional-changelog-writer: 8.0.0
       conventional-commits-filter: 5.0.0
       conventional-commits-parser: 6.0.0
-      debug: 4.3.6
+      debug: 4.3.5
       get-stream: 7.0.1
       import-from-esm: 1.3.4
       into-stream: 7.0.0
@@ -2996,7 +3013,7 @@ snapshots:
       '@typescript-eslint/types': 7.14.1
       '@typescript-eslint/typescript-estree': 7.14.1(typescript@5.5.4)
       '@typescript-eslint/visitor-keys': 7.14.1
-      debug: 4.3.6
+      debug: 4.3.7
       eslint: 9.6.0
     optionalDependencies:
       typescript: 5.5.4
@@ -3012,7 +3029,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 7.14.1(typescript@5.5.4)
       '@typescript-eslint/utils': 7.14.1(eslint@9.6.0)(typescript@5.5.4)
-      debug: 4.3.6
+      debug: 4.3.7
       eslint: 9.6.0
       ts-api-utils: 1.3.0(typescript@5.5.4)
     optionalDependencies:
@@ -3026,7 +3043,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 7.14.1
       '@typescript-eslint/visitor-keys': 7.14.1
-      debug: 4.3.6
+      debug: 4.3.7
       globby: 11.1.0
       is-glob: 4.0.3
       minimatch: 9.0.5
@@ -3065,7 +3082,7 @@ snapshots:
 
   agent-base@7.1.1:
     dependencies:
-      debug: 4.3.6
+      debug: 4.3.5
     transitivePeerDependencies:
       - supports-color
 
@@ -3351,6 +3368,10 @@ snapshots:
   debug@4.3.6:
     dependencies:
       ms: 2.1.2
+
+  debug@4.3.7:
+    dependencies:
+      ms: 2.1.3
 
   deep-extend@0.6.0: {}
 
@@ -3859,14 +3880,14 @@ snapshots:
   http-proxy-agent@7.0.2:
     dependencies:
       agent-base: 7.1.1
-      debug: 4.3.6
+      debug: 4.3.5
     transitivePeerDependencies:
       - supports-color
 
   https-proxy-agent@7.0.4:
     dependencies:
       agent-base: 7.1.1
-      debug: 4.3.6
+      debug: 4.3.5
     transitivePeerDependencies:
       - supports-color
 
@@ -3885,7 +3906,7 @@ snapshots:
 
   import-from-esm@1.3.4:
     dependencies:
-      debug: 4.3.6
+      debug: 4.3.5
       import-meta-resolve: 4.1.0
     transitivePeerDependencies:
       - supports-color
@@ -4160,6 +4181,8 @@ snapshots:
   minipass@7.1.2: {}
 
   ms@2.1.2: {}
+
+  ms@2.1.3: {}
 
   mz@2.7.0:
     dependencies:
