@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { Option, program } from "commander";
+import { Command, Option, program } from "commander";
 import deploy from "./deploy";
 import doctor from "./doctor";
 import { load_env } from "./utils/app";
@@ -33,7 +33,7 @@ program
       .env("OTAGO_PROJECT")
       .default(OTAGO_PROJECT),
   )
-  .action(doctor);
+  .action(actionWrapper(doctor));
 
 program
   .command("deploy")
@@ -60,6 +60,21 @@ program
       .env("OTAGO_PRIVATE_KEY")
       .default(OTAGO_PRIVATE_KEY, "*****"),
   )
-  .action(deploy);
+  .action(actionWrapper(deploy));
 
 program.parse();
+
+function actionErrorHanlder(error: Error) {
+  console.error("[ERROR] " + error.message);
+  process.exit(1);
+}
+
+export function actionWrapper(fn: Parameters<Command["action"]>[0]) {
+  return async (...args: Parameters<Parameters<Command["action"]>[0]>) => {
+    try {
+      await fn(...args);
+    } catch (error) {
+      actionErrorHanlder(error as Error);
+    }
+  };
+}
