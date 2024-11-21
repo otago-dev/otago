@@ -53,7 +53,7 @@ program
   .addOption(
     new Option("-pf, --platforms <platforms>", "Platforms to deploy, comma separated.")
       .env("OTAGO_PLATFORMS")
-      .default(OTAGO_PLATFORMS || "all"),
+      .default(OTAGO_PLATFORMS || "android,ios"),
   )
   .addOption(
     new Option("-pk, --private-key <private_key>", "Private key (or its path) to sign your update.")
