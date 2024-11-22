@@ -81,10 +81,10 @@ const dynamic_spinner = (text: string) => {
     spinner_frame_interval,
   );
 
-  const end = (is_success: boolean) => {
+  const end = (icon: string, color: keyof typeof colors) => {
     clearInterval(interval);
     replace("");
-    colored_log(is_success ? "green" : "red", `${is_success ? "✓" : "✗"} ${text}`);
+    colored_log(color, `${icon} ${text}`);
     cliCursor.show(stream);
   };
 
@@ -94,9 +94,9 @@ const dynamic_spinner = (text: string) => {
 const no_spinner = (text: string) => {
   const delay_step = setTimeout(() => colored_log("gray", `${text}...`), 50);
 
-  const end = (is_success: boolean) => {
+  const end = (icon: string, color: keyof typeof colors) => {
     clearTimeout(delay_step);
-    colored_log(is_success ? "green" : "red", `${is_success ? "✓" : "✗"} ${text}`);
+    colored_log(color, `${icon} ${text}`);
   };
 
   return end;
@@ -105,8 +105,9 @@ const no_spinner = (text: string) => {
 export const step_spinner = (text: string) => {
   const end = stream.clearLine === undefined ? no_spinner(text) : dynamic_spinner(text);
   return {
-    succeed: () => end(true),
-    fail: () => end(false),
+    succeed: () => end("✓", "green"),
+    fail: () => end("✗", "red"),
+    end: () => end("ⓘ ", "cyan"),
   };
 };
 
