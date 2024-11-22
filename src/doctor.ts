@@ -7,7 +7,6 @@ const ROOT_DIR = ".";
 
 export default async ({ project: otago_project_slug, key: otago_api_key }: { project: string; key: string }) => {
   let step;
-  let success = true;
 
   // Get project
   const project = await get_project(otago_project_slug, otago_api_key);
@@ -115,8 +114,10 @@ Note: if you use multiple environments, you need a dynamic config file:
 
   for (const platform of platforms) {
     step = step_spinner(`Check native config for ${platform}`);
+
+    const fail_message = `We detected a local '${platform}' folder.\n- If you use expo to build, run 'expo prebuild' locally.\n- If not, ensure you have followed https://docs.expo.dev/bare/installing-updates/.`;
+
     if (fs_exists(ROOT_DIR, platform)) {
-      // https://docs.expo.dev/bare/installing-updates/
       if (platform === "android") {
         const android_build_gradle = read_file(ROOT_DIR, "android/app/build.gradle");
         const has_js_engine = android_build_gradle && android_build_gradle.includes("expo.jsEngine");
@@ -127,51 +128,14 @@ Note: if you use multiple environments, you need a dynamic config file:
         const has_use_cleartext_traffic =
           android_manifest && android_manifest.includes(`android:usesCleartextTraffic="true"`);
 
-        if (has_js_engine && has_runtime_version && has_otago_manifest_url && has_use_cleartext_traffic) {
+        if (
+          expo_config?.extra?.eas ||
+          (has_js_engine && has_runtime_version && has_otago_manifest_url && has_use_cleartext_traffic)
+        ) {
           step.succeed();
         } else {
-          step.fail();
-          success = false;
-
-          if (!has_js_engine) {
-            colored_log(
-              "yellow",
-              `Missing JS engine configuration. Add the following to your build.gradle:
-
-# android/app/build.gradle (before android block)
-// Override \`hermesEnabled\` by \`expo.jsEngine\`
-ext {
-  hermesEnabled = (findProperty('expo.jsEngine') ?: "hermes") == "hermes"
-}
-`,
-            );
-          }
-          if (!has_runtime_version || !has_otago_manifest_url) {
-            colored_log(
-              "yellow",
-              `Missing updates module configuration. Add the following to your AndroidManifest.xml:
-
-# android/app/src/main/AndroidManifest.xml
-<application ...>
-  <meta-data android:name="expo.modules.updates.ENABLED" android:value="true"/>
-  <meta-data android:name="expo.modules.updates.EXPO_RUNTIME_VERSION" android:value="@string/expo_runtime_version"/>
-  <meta-data android:name="expo.modules.updates.EXPO_UPDATES_CHECK_ON_LAUNCH" android:value="ALWAYS"/>
-  <meta-data android:name="expo.modules.updates.EXPO_UPDATES_LAUNCH_WAIT_MS" android:value="0"/>
-  <meta-data android:name="expo.modules.updates.EXPO_UPDATE_URL" android:value="${project.manifest_url}"/>
-  ...
-`,
-            );
-          }
-          if (!has_use_cleartext_traffic) {
-            colored_log(
-              "yellow",
-              `Missing usesCleartextTraffic configuration. Add the following to your AndroidManifest.xml:
-
-# android/app/src/main/AndroidManifest.xml
-<application ... android:usesCleartextTraffic="true">
-`,
-            );
-          }
+          step.end();
+          colored_log("cyan", fail_message);
         }
       } else if (platform === "ios") {
         const ios_podfile = read_file(ROOT_DIR, "ios/Podfile");
@@ -187,56 +151,11 @@ ext {
         const has_runtime_version = ios_plist && ios_plist.includes("EXUpdatesRuntimeVersion");
         const has_otago_manifest_url = ios_plist && ios_plist.includes(project.manifest_url);
 
-        if (has_js_engine && has_runtime_version && has_otago_manifest_url) {
+        if (expo_config?.extra?.eas || (has_js_engine && has_runtime_version && has_otago_manifest_url)) {
           step.succeed();
         } else {
-          step.fail();
-          success = false;
-
-          if (!has_js_engine) {
-            colored_log(
-              "yellow",
-              `Missing JS engine configuration. Add the following to your Podfile config:
-
-# ios/Podfile.properties.json
-{
-  "expo.jsEngine": "hermes"
-}
-
-# ios/Podfile
-require 'json'
-podfile_properties = JSON.parse(File.read(File.join(__dir__, 'Podfile.properties.json'))) rescue {}
-
-And replace ":hermes_enabled: ..." with:
-:hermes_enabled => podfile_properties['expo.jsEngine'] == nil || podfile_properties['expo.jsEngine'] == 'hermes',
-`,
-            );
-          }
-          if (!has_runtime_version || !has_otago_manifest_url) {
-            colored_log(
-              "yellow",
-              `Missing updates module configuration. Add the following to Supporting/Expo.plist (replace with the right runtime version):
-
-# ${ios_plist_path}
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-  <dict>
-    <key>EXUpdatesCheckOnLaunch</key>
-    <string>ALWAYS</string>
-    <key>EXUpdatesEnabled</key>
-    <true/>
-    <key>EXUpdatesLaunchWaitMs</key>
-    <integer>0</integer>
-    <key>EXUpdatesRuntimeVersion</key>
-    <string>1.0.0</string>
-    <key>EXUpdatesURL</key>
-    <string>${project.manifest_url}</string>
-  </dict>
-</plist>
-`,
-            );
-          }
+          step.end();
+          colored_log("cyan", fail_message);
         }
       }
     } else {
@@ -244,22 +163,19 @@ And replace ":hermes_enabled: ..." with:
     }
   }
 
-  if (success) {
-    if (expo_config.updates?.codeSigningCertificate) {
-      // TODO: check native configs for code signing
-      step_spinner(`Code signing configured`).succeed();
-    } else if (expo_config.updates && !expo_config.updates.codeSigningCertificate) {
-      colored_log(
-        "cyan",
-        "\nⓘ  We recommend signing code updates. See https://otago.dev/docs#how-to-sign-deployments for more information.",
-      );
-    }
-
+  step = step_spinner(`Check code signing configuration`);
+  if (expo_config.updates?.codeSigningCertificate) {
+    step.succeed();
+  } else if (expo_config.updates && !expo_config.updates.codeSigningCertificate) {
+    step.end();
     colored_log(
-      "magenta",
-      "\n✓ Congratulations, your app is now configured for OTA updates!\n⚠ Note that you need to build a version (with all env vars) and publish it so you can send your first code push.",
+      "cyan",
+      "We recommend signing code updates for security. See https://otago.dev/docs#how-to-sign-deployments for more information.",
     );
-  } else {
-    process.exit(1);
   }
+
+  colored_log(
+    "magenta",
+    "\n✓ Congratulations, your app is now configured for OTA updates!\n⚠ Note that you need to build a version (with all env vars) and publish it so you can send your first code push.",
+  );
 };
