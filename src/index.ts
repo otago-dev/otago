@@ -60,6 +60,11 @@ program
       .env("OTAGO_PRIVATE_KEY")
       .default(OTAGO_PRIVATE_KEY, "*****"),
   )
+  .addOption(
+    new Option("-m, --message <message>", "Message to describe your code push.")
+      .env("OTAGO_DEPLOYMENT_MESSAGE")
+      .default("$CI_COMMIT_MESSAGE"),
+  )
   .action(actionWrapper(deploy));
 
 program.parse();

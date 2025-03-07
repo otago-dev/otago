@@ -14,3 +14,15 @@ export const get_current_git_version = async (root_dir: string) => {
 
   return commit_tag_gitcli || commit_tag_github || commit_tag_gitlab || "";
 };
+
+export const get_last_git_commit_message = async (root_dir: string) => {
+  let message_gitcli = undefined;
+  try {
+    const stdout = await exec_command(root_dir, "git log -1 --pretty=%B");
+    message_gitcli = stdout.trim();
+  } catch (error) {
+    // noop
+  }
+
+  return message_gitcli || process.env.CI_COMMIT_MESSAGE || "";
+};
