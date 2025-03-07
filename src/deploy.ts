@@ -3,7 +3,7 @@ import { extract_app_config, get_app_manifest, upload_all_assets } from "./utils
 import { exec_command, step_spinner } from "./utils/cli";
 import { expo_config_get, is_supported_platform, Platform } from "./utils/expo";
 import { read_file } from "./utils/file";
-import { get_current_git_version } from "./utils/git";
+import { get_current_git_version, get_last_git_commit_message } from "./utils/git";
 
 import type { SigningConfig } from "./utils/signing";
 
@@ -14,11 +14,13 @@ export default async ({
   key: otago_api_key,
   privateKey: private_key_or_path,
   platforms: platforms_param,
+  message: message_param,
 }: {
   project: string;
   key: string;
   privateKey?: string;
   platforms: string;
+  message?: string;
 }) => {
   let step;
 
@@ -66,11 +68,16 @@ export default async ({
 
   // Create project deployment
   const unique_runtime_versions = [...new Set(Object.values(app_config.runtime_versions))];
+  const message =
+    (message_param && message_param.includes("$CI_COMMIT_MESSAGE")
+      ? message_param.replace("$CI_COMMIT_MESSAGE", await get_last_git_commit_message(ROOT_DIR))
+      : message_param) || undefined;
   const { id: deployment_id } = await create_project_deployment(otago_project_slug, otago_api_key, {
     runtime_version:
       unique_runtime_versions.length <= 1 ? unique_runtime_versions[0] : JSON.stringify(app_config.runtime_versions),
     commit_version: await get_current_git_version(ROOT_DIR),
     config: app_config,
+    message: message?.slice(0, 255),
   });
 
   // Bundle assets
