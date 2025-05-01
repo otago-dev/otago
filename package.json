@@ -25,7 +25,7 @@
     "@expo/config": "^10.0.11",
     "@expo/config-plugins": "^9.0.17",
     "@expo/env": "^0.4.2",
-    "@expo/fingerprint": "^0.11.11",
+    "@expo/fingerprint": "^0.12.4",
     "cli-cursor": "^3.1.0",
     "commander": "^12.0.0",
     "mime": "^3.0.0",
