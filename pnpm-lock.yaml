@@ -27,8 +27,8 @@ importers:
         specifier: ^12.0.0
         version: 12.1.0
       mime:
-        specifier: ^3.0.0
-        version: 3.0.0
+        specifier: ^4.0.7
+        version: 4.0.7
       node-fetch:
         specifier: '2'
         version: 2.7.0
@@ -1638,13 +1638,8 @@ packages:
     resolution: {integrity: sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==}
     engines: {node: '>= 0.6'}
 
-  mime@3.0.0:
-    resolution: {integrity: sha512-jSCU7/VB1loIWBZe14aEYHU/+1UMEHoaO7qxCOVJOw9GgH72VAWppxNcjU+x9a2k3GSIBXNKxXQFqRvvZ7vr3A==}
-    engines: {node: '>=10.0.0'}
-    hasBin: true
-
-  mime@4.0.3:
-    resolution: {integrity: sha512-KgUb15Oorc0NEKPbvfa0wRU+PItIEZmiv+pyAO2i0oTIVTJhlzMclU7w4RXWQrSOVH5ax/p/CkIO7KI4OyFJTQ==}
+  mime@4.0.7:
+    resolution: {integrity: sha512-2OfDPL+e03E0LrXaGYOtTFIYhiuzep94NSsuhrNULq+stylcJedcHdzHtz0atMUuGwJfFYs0YL5xeC/Ca2x0eQ==}
     engines: {node: '>=16'}
     hasBin: true
 
@@ -2972,7 +2967,7 @@ snapshots:
       https-proxy-agent: 7.0.4
       issue-parser: 7.0.1
       lodash-es: 4.17.21
-      mime: 4.0.3
+      mime: 4.0.7
       p-filter: 4.1.0
       semantic-release: 24.0.0(typescript@5.5.4)
       url-join: 5.0.0
@@ -4204,9 +4199,7 @@ snapshots:
     dependencies:
       mime-db: 1.52.0
 
-  mime@3.0.0: {}
-
-  mime@4.0.3: {}
+  mime@4.0.7: {}
 
   mimic-fn@2.1.0: {}
 
