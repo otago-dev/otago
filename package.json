@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@expo/config": "^11.0.13",
-    "@expo/config-plugins": "^10.0.3",
+    "@expo/config-plugins": "^10.1.2",
     "@expo/env": "^0.4.2",
     "@expo/fingerprint": "^0.13.3",
     "cli-cursor": "^3.1.0",
