@@ -18,8 +18,8 @@ importers:
         specifier: ^0.4.2
         version: 0.4.2
       '@expo/fingerprint':
-        specifier: ^0.13.3
-        version: 0.13.3
+        specifier: ^0.13.4
+        version: 0.13.4
       cli-cursor:
         specifier: ^3.1.0
         version: 3.1.0
@@ -273,8 +273,8 @@ packages:
   '@expo/env@0.4.2':
     resolution: {integrity: sha512-TgbCgvSk0Kq0e2fLoqHwEBL4M0ztFjnBEz0YCDm5boc1nvkV1VMuIMteVdeBwnTh8Z0oPJTwHCD49vhMEt1I6A==}
 
-  '@expo/fingerprint@0.13.3':
-    resolution: {integrity: sha512-Ziore8lpUzTvZaZigcol0op3muvEiBpwNn8M500qij/RvVFLEOH5sNadEBKwEmzdpUC5ij3eJzkr9b7Gr7///g==}
+  '@expo/fingerprint@0.13.4':
+    resolution: {integrity: sha512-MYfPYBTMfrrNr07DALuLhG6EaLVNVrY/PXjEzsjWdWE4ZFn0yqI0IdHNkJG7t1gePT8iztHc7qnsx+oo/rDo6w==}
     hasBin: true
 
   '@expo/json-file@9.1.4':
@@ -643,8 +643,8 @@ packages:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
     engines: {node: '>=8'}
 
-  ansi-regex@6.1.0:
-    resolution: {integrity: sha512-7HSX4QQb4CspciLpVFwyRe79O3xsIZDDLER21kERQ71oaPodF8jL725AgJMFAYbooIqolJoRLuM81SpeUkpkvA==}
+  ansi-regex@6.2.0:
+    resolution: {integrity: sha512-TKY5pyBkHyADOPYlRT9Lx6F544mPl0vS5Ew7BJ45hA08Q+t3GjbueLliBWN3sMICk6+y7HdyxSzC4bWS8baBdg==}
     engines: {node: '>=12'}
 
   ansi-styles@3.2.1:
@@ -760,8 +760,8 @@ packages:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
     engines: {node: '>=10'}
 
-  chalk@5.4.1:
-    resolution: {integrity: sha512-zgVZuo2WcZgfUEmsn6eO3kINexW8RAE4maiQ8QNs8CtpPCSyMiYsULR3HQYkm3w8FIA3SberyMJMSldGsW+U3w==}
+  chalk@5.6.0:
+    resolution: {integrity: sha512-46QrSQFyVSEyYAgQ22hQ+zDa60YHA4fBstHmtSApj1Y5vKtG27fWowW03jCk5KcbXEWPZUIR894aARCA/G1kfQ==}
     engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
 
   char-regex@1.0.2:
@@ -2687,7 +2687,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@expo/fingerprint@0.13.3':
+  '@expo/fingerprint@0.13.4':
     dependencies:
       '@expo/spawn-async': 1.7.2
       arg: 5.0.2
@@ -3095,7 +3095,7 @@ snapshots:
 
   agent-base@7.1.1:
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.5
     transitivePeerDependencies:
       - supports-color
 
@@ -3120,7 +3120,7 @@ snapshots:
 
   ansi-regex@5.0.1: {}
 
-  ansi-regex@6.1.0: {}
+  ansi-regex@6.2.0: {}
 
   ansi-styles@3.2.1:
     dependencies:
@@ -3232,7 +3232,7 @@ snapshots:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
 
-  chalk@5.4.1: {}
+  chalk@5.6.0: {}
 
   char-regex@1.0.2: {}
 
@@ -4145,7 +4145,7 @@ snapshots:
   marked-terminal@7.0.0(marked@12.0.2):
     dependencies:
       ansi-escapes: 6.2.1
-      chalk: 5.4.1
+      chalk: 5.6.0
       cli-highlight: 2.1.11
       cli-table3: 0.6.5
       marked: 12.0.2
@@ -4676,7 +4676,7 @@ snapshots:
 
   strip-ansi@7.1.0:
     dependencies:
-      ansi-regex: 6.1.0
+      ansi-regex: 6.2.0
 
   strip-bom@3.0.0: {}
 
