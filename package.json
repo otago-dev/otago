@@ -1,6 +1,6 @@
 {
   "name": "otago",
-  "version": "2.2.7",
+  "version": "2.2.8",
   "main": "dist/index.js",
   "bin": {
     "otago": "dist/index.js"
