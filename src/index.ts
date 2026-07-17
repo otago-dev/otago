@@ -4,6 +4,7 @@ import { Command, Option, program } from "commander";
 import deploy from "./deploy";
 import doctor from "./doctor";
 import { load_env } from "./utils/app";
+import { colored_log } from "./utils/cli";
 import { read_file } from "./utils/file";
 
 const { version } = JSON.parse(read_file(__dirname, `../package.json`) || "{}");
@@ -14,6 +15,7 @@ program
   .version(version, "-v, --version");
 
 if (["doctor", "deploy"].includes(process.argv[2])) {
+  colored_log("gray", `otago v${version}`);
   load_env(".");
 }
 const { OTAGO_API_KEY, OTAGO_PLATFORMS, OTAGO_PRIVATE_KEY, OTAGO_PROJECT } = process.env;
